@@ -1,0 +1,36 @@
+{
+  "name": "nexus-http",
+  "version": "1.0.0-pre1",
+  "description": "nexus-http is a simple http client that allows you to make requests easily.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc -watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CheeseGrinder/simple-http.git"
+  },
+  "keywords": [
+    "typescript",
+    "http",
+    "client"
+  ],
+  "author": {
+    "name": "CheeseGrinder",
+    "email": "devs.cheese@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CheeseGrinder/nexus-http/issues"
+  },
+  "homepage": "https://github.com/CheeseGrinder/nexus-http#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^4.4.2"
+  }
+}
