@@ -34,6 +34,10 @@ const client = NexusClient.crete({
   baseUrl: 'http://localhost:3000/',
   enableDebug: true
 });
+class CheeseClient extends NexusClient {
+  baseUrl: 'http://localhost:3000/';
+  enableDebug: true;
+}
 
 // To make a get request
 // In this case, we assume that we have defined a baseUrl.

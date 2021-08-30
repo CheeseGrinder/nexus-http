@@ -1,8 +1,10 @@
 import { HttpResponse } from './response';
 import { HttpEvent } from './types';
 
+
 type HttpHandlerInit<T = any> = (value: HttpResponse<T>) => void | VoidFunction;
 export type HttpObserver<T> = HttpEvent<T> | HttpHandlerInit<T>;
+
 type HandlerEvent = 'success' | 'error' | 'complete';
 
 export class HttpHandler<T> {
@@ -27,4 +29,8 @@ export class HttpHandler<T> {
     this.subscribers[event] ??= [];
     this.subscribers[event].push(callback);
   }
+}
+
+export interface HttpResponseHandler<T> {
+  handle: (handler: HttpObserver<T>) => void;
 }

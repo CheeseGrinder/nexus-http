@@ -1,9 +1,10 @@
 import { BodyError } from './errors';
-import { HttpHandler, HttpObserver } from './handler';
+import { HttpHandler, HttpResponseHandler } from './handler';
 import { HttpHeaders } from './headers';
 import { HttpMethod } from './method.enum';
 import { HttpResponse, HttpResponseType } from './response';
 import { HttpBodyInit, HttpHeadersInit } from './types';
+
 
 export interface RequestContext {
   url: string;
@@ -19,10 +20,6 @@ interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'metho
    * @default 'json'
    */
   responseType?: HttpResponseType;
-}
-
-interface HttpRequestHandler<T> {
-  handle: (handler: HttpObserver<T>) => void;
 }
 
 export class HttpRequest<T = any> {
@@ -63,7 +60,7 @@ export class HttpRequest<T = any> {
     return this;
   }
 
-  fetch(): HttpRequestHandler<T> {
+  fetch(): HttpResponseHandler<T> {
     const { enableDebug, url } = this.context;
     const emmiter = new HttpHandler<T>();
     const request = new Request(url, this.requestInit);
@@ -91,8 +88,17 @@ export class HttpRequest<T = any> {
 
   private initHeaders() {
     const headers = new Headers();
+
     headers.append('Accept', 'application/json, text/plain, */*');
-    headers.append('Content-Type', 'application/json;charset=UTF-8');
+    switch (this.context.responseType) {
+      case 'blob':
+      case 'arrayBuffer': headers.append('Content-Type', 'application/octet-stream; charset=UTF-8'); break;
+      case 'text': headers.append('Content-Type', 'text/*; charset=UTF-8'); break;
+
+      case 'json':
+      default: headers.append('Content-Type', 'application/json; charset=UTF-8'); break;
+    }
+
     this.requestInit.headers = headers;
   }
 }

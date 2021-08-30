@@ -1,6 +1,8 @@
+import { HttpStatusCode } from 'status-code.enum';
 import { HttpHeaders } from './headers';
 import { HttpMethod } from './method.enum';
 import { RequestContext } from './request';
+
 
 export type HttpResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer';
 
@@ -9,7 +11,7 @@ interface HttpResponseInit<T> {
   readonly method: HttpMethod;
   readonly headers: HttpHeaders;
   readonly ok: boolean;
-  readonly status: number;
+  readonly status: HttpStatusCode;
   readonly statusText: string;
   readonly body: T;
   readonly type: HttpResponseType
@@ -21,7 +23,7 @@ export class HttpResponse<T = any> implements HttpResponseInit<T> {
   readonly method: HttpMethod;
   readonly headers: HttpHeaders;
   readonly ok: boolean;
-  readonly status: number;
+  readonly status: HttpStatusCode;
   readonly statusText: string;
   readonly body: T;
   readonly type: HttpResponseType
