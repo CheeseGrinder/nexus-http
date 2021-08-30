@@ -28,7 +28,7 @@ In a `ts` file this code works, in pure JS, just remove the extra typing from th
 import { NexusClient } from 'nexus-http';
 
 // Several ways to create an instance
-const client = new HttpClient();
+const client = new NexusClient();
 const client = NexusClient.crete();
 const client = NexusClient.crete({
   baseUrl: 'http://localhost:3000/',
