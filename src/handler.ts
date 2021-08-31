@@ -1,14 +1,12 @@
 import { HttpResponse } from './response';
 import { HttpEvent } from './types';
 
-
 type HttpHandlerInit<T = any> = (value: HttpResponse<T>) => void | VoidFunction;
 export type HttpObserver<T> = HttpEvent<T> | HttpHandlerInit<T>;
 
 type HandlerEvent = 'success' | 'error' | 'complete';
 
 export class HttpHandler<T> {
-
   private subscribers: Partial<Record<HandlerEvent, HttpHandlerInit[]>> = {};
 
   emit(event: HandlerEvent, data?: HttpResponse): void {

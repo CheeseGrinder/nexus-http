@@ -1,4 +1,5 @@
-export type HttpHeadersInit = string
-| Record<string, string | string[]>
-| { [header: string]: string | string[] }
-| [ string, string | string[] ][];
+export type HttpHeadersInit =
+  | string
+  | Record<string, string | string[]>
+  | { [header: string]: string | string[] }
+  | [string, string | string[]][];

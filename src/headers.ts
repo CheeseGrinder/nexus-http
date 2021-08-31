@@ -1,10 +1,8 @@
-import { HttpHeadersInit } from './types/headers'
-
+import { HttpHeadersInit } from './types/headers';
 
 type HttpHeadersValue = string | string[];
 
 export class HttpHeaders {
-
   private headers: Map<string, string[]>;
 
   /** Constructs a new HTTP header object with the given values. */
@@ -12,7 +10,8 @@ export class HttpHeaders {
     this.headers = new Map();
 
     if (typeof headers === 'string') {
-      headers.split('\n')
+      headers
+        .split('\n')
         .filter(h => h.indexOf(':') > 0)
         .forEach(header => {
           const index = header.indexOf(':');
@@ -21,13 +20,10 @@ export class HttpHeaders {
 
           this.append(key, value);
         });
-
     } else if (typeof headers === 'object') {
       const _headers = Array.isArray(headers) ? headers : Object.entries(headers);
 
-      _headers
-        .filter(([k, v]) => k && v)
-        .forEach(([key, value]) => this.append(key, value));
+      _headers.filter(([k, v]) => k && v).forEach(([key, value]) => this.append(key, value));
     }
   }
 
@@ -100,7 +96,7 @@ export class HttpHeaders {
     if (!Array.isArray(value)) value = [value];
 
     const values = this.headers.get(name).filter(h => !value.includes(h));
-    (values.length === 0) ? this.headers.delete(name) : this.headers.set(name, values);
+    values.length === 0 ? this.headers.delete(name) : this.headers.set(name, values);
 
     return this;
   }
@@ -121,8 +117,7 @@ export class HttpHeaders {
   }
 
   foreach(callback: (name: string, values: string[]) => void): void {
-    [...this.headers.keys()]
-      .forEach(key => callback(key, this.headers.get(key)));
+    [...this.headers.keys()].forEach(key => callback(key, this.headers.get(key)));
   }
 
   static fromHeaders(other: Headers): HttpHeaders {

@@ -3,7 +3,6 @@ import { HttpHeaders } from './headers';
 import { HttpMethod } from './method.enum';
 import { RequestContext } from './request';
 
-
 export type HttpResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer';
 
 interface HttpResponseInit<T> {
@@ -14,11 +13,10 @@ interface HttpResponseInit<T> {
   readonly status: HttpStatusCode;
   readonly statusText: string;
   readonly body: T;
-  readonly type: HttpResponseType
+  readonly type: HttpResponseType;
 }
 
 export class HttpResponse<T = any> implements HttpResponseInit<T> {
-
   readonly url: string;
   readonly method: HttpMethod;
   readonly headers: HttpHeaders;
@@ -26,7 +24,7 @@ export class HttpResponse<T = any> implements HttpResponseInit<T> {
   readonly status: HttpStatusCode;
   readonly statusText: string;
   readonly body: T;
-  readonly type: HttpResponseType
+  readonly type: HttpResponseType;
 
   constructor(init: HttpResponseInit<T>) {
     this.url = init.url;
@@ -54,10 +52,12 @@ export class HttpResponse<T = any> implements HttpResponseInit<T> {
       status: hasErrorField ? body.status ?? response.status : response.status,
       statusText: hasErrorField ? body.statusText ?? response.statusText : response.statusText,
       type: context.responseType,
-      body: hasErrorField ? {
-        message: body.message,
-        error: body.error
-      } : body
+      body: hasErrorField
+        ? {
+            message: body.message,
+            error: body.error,
+          }
+        : body,
     });
   }
 }

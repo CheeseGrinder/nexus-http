@@ -8,8 +8,13 @@
     "dist/"
   ],
   "scripts": {
-    "build": "tsc",
-    "start": "tsc -watch"
+    "build": "tsc -b tsconfig.build.json",
+    "start": "tsc -w",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "repository": {
     "type": "git",
@@ -31,6 +36,14 @@
   "homepage": "https://github.com/CheeseGrinder/nexus-http#readme",
   "dependencies": {},
   "devDependencies": {
+    "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint": "^7.32.0",
+    "jest": "^27.1.0",
+    "prettier": "^2.3.2",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
     "typescript": "^4.4.2"
   }
 }

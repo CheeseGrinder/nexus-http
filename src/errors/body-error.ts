@@ -5,7 +5,6 @@ interface BodyErrorOptions {
 }
 
 export class BodyError extends Error {
-
   readonly method: HttpMethod;
 
   constructor(options: BodyErrorOptions) {

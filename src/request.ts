@@ -5,7 +5,6 @@ import { HttpMethod } from './method.enum';
 import { HttpResponse, HttpResponseType } from './response';
 import { HttpBodyInit, HttpHeadersInit } from './types';
 
-
 export interface RequestContext {
   url: string;
   method: HttpMethod;
@@ -23,7 +22,6 @@ interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'metho
 }
 
 export class HttpRequest<T = any> {
-
   private context: RequestContext = {} as RequestContext;
   private requestInit: RequestInit = {};
 
@@ -34,7 +32,7 @@ export class HttpRequest<T = any> {
   }
 
   body(data: HttpBodyInit): HttpRequest<T> {
-    if (![HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, ].includes(this.context.method))
+    if (![HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH].includes(this.context.method))
       throw new BodyError({ method: this.context.method });
 
     this.requestInit.body = JSON.stringify(data);
@@ -45,7 +43,7 @@ export class HttpRequest<T = any> {
   configure(options: RequestConfigOptions): HttpRequest<T> {
     Object.entries(options)
       .filter(([key]) => !['headers', 'responseType'].includes(key))
-      .forEach(([key, value]) => this.requestInit[key] = value);
+      .forEach(([key, value]) => (this.requestInit[key] = value));
 
     if (options.headers) {
       if (!(options.headers instanceof HttpHeaders)) options.headers = new HttpHeaders(options.headers);
@@ -68,7 +66,7 @@ export class HttpRequest<T = any> {
     fetch(request)
       .then(response => HttpResponse.fromResponse<T>(response, this.context))
       .then(response => {
-        const event = (response.ok) ? 'success' : 'error';
+        const event = response.ok ? 'success' : 'error';
         enableDebug && console.log('[client] emit', event);
         emmiter.emit(event, response);
       })
@@ -81,9 +79,9 @@ export class HttpRequest<T = any> {
         emmiter.emit('complete');
       });
 
-      return {
-        handle: emmiter.handler.bind(emmiter)
-      }
+    return {
+      handle: emmiter.handler.bind(emmiter),
+    };
   }
 
   private initHeaders() {
@@ -92,11 +90,17 @@ export class HttpRequest<T = any> {
     headers.append('Accept', 'application/json, text/plain, */*');
     switch (this.context.responseType) {
       case 'blob':
-      case 'arrayBuffer': headers.append('Content-Type', 'application/octet-stream; charset=UTF-8'); break;
-      case 'text': headers.append('Content-Type', 'text/*; charset=UTF-8'); break;
+      case 'arrayBuffer':
+        headers.append('Content-Type', 'application/octet-stream; charset=UTF-8');
+        break;
+      case 'text':
+        headers.append('Content-Type', 'text/*; charset=UTF-8');
+        break;
 
       case 'json':
-      default: headers.append('Content-Type', 'application/json; charset=UTF-8'); break;
+      default:
+        headers.append('Content-Type', 'application/json; charset=UTF-8');
+        break;
     }
 
     this.requestInit.headers = headers;
