@@ -35,7 +35,7 @@ export class HttpHeaders {
    * @returns `true` if the header exists, `false` otherwise.
    */
   has(name: string): boolean {
-    return this.headers.has(name.toLowerCase());
+    return this.headers.has(name.trim());
   }
 
   /**
@@ -46,7 +46,7 @@ export class HttpHeaders {
    * @returns The value string if the header exists, `null` otherwise
    */
   get(name: string): string | null {
-    const values = this.headers.get(name.toLowerCase());
+    const values = this.headers.get(name.trim());
     return values?.[0] ?? null;
   }
 
@@ -67,7 +67,7 @@ export class HttpHeaders {
    * @returns A string of values if the header exists, null otherwise.
    */
   getAll(name: string): string[] | null {
-    return this.headers.get(name.toLowerCase()) || null;
+    return this.headers.get(name.trim()) || null;
   }
 
   /**
@@ -91,12 +91,16 @@ export class HttpHeaders {
    * @param {string | string[]} [value] The value or values to delete for the given header.
    */
   delete(name: string, value?: HttpHeadersValue): HttpHeaders {
-    if (!this.headers.has(name)) return this;
-    if (!value) this.headers.delete(name);
+    const trimedName = name.trim();
+    if (!this.headers.has(trimedName)) return this;
+    if (!value) {
+      this.headers.delete(trimedName);
+      return this;
+    }
     if (!Array.isArray(value)) value = [value];
 
-    const values = this.headers.get(name).filter(h => !value.includes(h));
-    values.length === 0 ? this.headers.delete(name) : this.headers.set(name, values);
+    const values = this.headers.get(trimedName).filter(h => !value.includes(h));
+    values.length === 0 ? this.headers.delete(trimedName) : this.headers.set(trimedName, values);
 
     return this;
   }
@@ -109,10 +113,11 @@ export class HttpHeaders {
    * @param value The value or values to set or overide for the given header.
    */
   append(key: string, value: HttpHeadersValue): HttpHeaders {
-    if (!this.headers.has(key.trim())) this.headers.set(key.trim(), []);
+    const trimedKey = key.trim();
+    if (!this.headers.has(trimedKey)) this.headers.set(trimedKey, []);
     if (!Array.isArray(value)) value = [value];
 
-    this.headers.get(key).push(...value);
+    this.headers.get(trimedKey).push(...value);
     return this;
   }
 
