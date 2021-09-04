@@ -15,7 +15,6 @@ const config: Config.InitialOptions = {
     '^.+\\.(t|j)s$': 'ts-jest'
   },
   verbose: true,
-
   globals: {
     'ENV': 'test'
   },

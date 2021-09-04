@@ -11,6 +11,7 @@
     "build": "tsc -b tsconfig.build.json",
     "start": "tsc -w",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
