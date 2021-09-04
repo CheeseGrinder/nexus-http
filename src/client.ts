@@ -2,11 +2,11 @@ import { HttpMethod } from './method.enum';
 import { HttpRequest } from './request';
 
 type HttpQueryParamValue = string | number | bigint | boolean;
-type HttpQueryParam = Record<string, HttpQueryParamValue> | { [key: string]: HttpQueryParamValue };
+export type HttpQueryParam = Record<string, HttpQueryParamValue> | { [key: string]: HttpQueryParamValue };
 
 interface CreateOptions {
-  baseUrl: string;
-  enableDebug: boolean;
+  baseUrl?: string;
+  enableDebug?: boolean;
 }
 
 interface PrepareOptions {
@@ -34,80 +34,71 @@ export class NexusClient {
   protected baseUrl: string;
   protected enableDebug = false;
 
-  get<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.GET,
+  get<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.GET, url, query);
+  }
+
+  post<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.POST, url, query);
+  }
+
+  put<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.PUT, url, query);
+  }
+
+  patch<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.PATCH, url, query);
+  }
+
+  delete<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.DELETE, url, query);
+  }
+
+  head<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.HEAD, url, query);
+  }
+
+  options<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.OPTIONS, url, query);
+  }
+
+  trace<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.makeRequest<T>(HttpMethod.TRACE, url, query);
+  }
+
+  makeRequest<T>(method: HttpMethod, url: string, query?: HttpQueryParam): HttpRequest<T> {
+    return this.prepare({
+      url: this.buildUrlWithQuery(url, query),
+      method: method,
     });
   }
 
-  post<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.POST,
-    });
-  }
-
-  put<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.PUT,
-    });
-  }
-
-  patch<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.PATCH,
-    });
-  }
-
-  delete<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.DELETE,
-    });
-  }
-
-  head<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.HEAD,
-    });
-  }
-
-  options<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.OPTIONS,
-    });
-  }
-
-  trace<T>(url: string, query: HttpQueryParam = {}): HttpRequest<T> {
-    return this.prepare<T>({
-      url: this.buildUrlWithParams(url, query),
-      method: HttpMethod.TRACE,
-    });
-  }
-
-  private buildUrlWithParams(url: string, query: HttpQueryParam): string {
-    const hasParam = url.indexOf('?') !== -1;
-    if (!hasParam) return this.formatUrl(url);
+  private buildUrlWithQuery(url: string, query: HttpQueryParam = {}): string {
+    if (Object.keys(query).length === 0) return this.formatUrl(url);
 
     const queryParam = Object.entries(query)
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
 
-    if (url.endsWith('?')) return this.formatUrl(url + queryParam);
-    return this.formatUrl(`${url}?${queryParam}`);
+    const urlHasParam = url.indexOf('?') !== -1;
+    const urlEndWithMark = url.indexOf('?') === url.length - 1;
+
+    if (urlHasParam && urlEndWithMark) return this.formatUrl(url + queryParam);
+    if (urlHasParam && !urlEndWithMark) return this.formatUrl(`${url}&${queryParam}`);
+    if (!urlHasParam) return this.formatUrl(`${url}?${queryParam}`);
   }
 
   private formatUrl(url: string): string {
-    const baseUrl = this.baseUrl;
+    const { baseUrl } = this;
     if (!baseUrl) return url;
 
-    const slashIndex = url.indexOf('/');
-    return slashIndex === 0 ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
+    const urlStartWithSlash = url.indexOf('/') === 0;
+    const baseEndWithSlashIndex = baseUrl.lastIndexOf('/') === baseUrl.length - 1;
+
+    if (baseEndWithSlashIndex && urlStartWithSlash) return `${baseUrl}${url.slice(1)}`;
+    if (!baseEndWithSlashIndex && urlStartWithSlash) return baseUrl + url;
+    if (baseEndWithSlashIndex && !urlStartWithSlash) return baseUrl + url;
+    if (!baseEndWithSlashIndex && !urlStartWithSlash) return `${baseUrl}/${url}`;
   }
 
   private prepare<T>(options: PrepareOptions): HttpRequest<T> {
