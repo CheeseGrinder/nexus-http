@@ -14,10 +14,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "baseUrl": "./src",
-    "outDir": "./dist",
-    "paths": {
-      "~src": ["./src"]
-    }
+    "outDir": "./dist"
   },
   "exclude": [
     "./node_modules",

@@ -1,6 +1,5 @@
-import { HttpInterceptor } from 'types/interceptor';
-import { HttpMethod } from 'method.enum';
-import { InterceptorContext } from 'types';
+import { HttpMethod } from '../method.enum';
+import { HttpInterceptor, InterceptorContext } from '../types';
 
 export class InitHeadersInterceptor implements HttpInterceptor {
   // This is a hack because we add it directly in request

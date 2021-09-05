@@ -1,7 +1,7 @@
-import { HttpHeaders } from 'headers';
-import { HttpInterceptor } from 'types/interceptor';
-import { HttpMethod } from 'method.enum';
-import { HttpResponseType } from 'response';
+import { HttpHeaders } from '../headers';
+import { HttpMethod } from '../method.enum';
+import { HttpResponseType } from '../response';
+import { HttpInterceptor } from './interceptor';
 
 export interface RequestContext {
   url: string;

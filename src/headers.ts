@@ -1,4 +1,4 @@
-import { HttpHeadersInit } from './types/headers';
+import { HttpHeadersInit } from './types';
 
 type HttpHeadersValue = string | string[];
 

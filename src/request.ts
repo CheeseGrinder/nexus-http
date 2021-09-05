@@ -1,4 +1,4 @@
-import { HttpInterceptor } from 'types/interceptor';
+import { HttpInterceptor } from './types';
 import { BodyError } from './errors';
 import { HttpHandler, HttpResponseHandler } from './handler';
 import { HttpHeaders } from './headers';

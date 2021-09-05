@@ -1,4 +1,4 @@
-import { HttpInterceptor } from 'types/interceptor';
+import { HttpInterceptor } from './types';
 import { HttpMethod } from './method.enum';
 import { HttpRequest } from './request';
 

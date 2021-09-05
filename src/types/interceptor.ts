@@ -1,5 +1,5 @@
-import { HttpMethod } from 'method.enum';
-import { InterceptorContext } from 'types';
+import { HttpMethod } from '../method.enum';
+import { InterceptorContext } from './context';
 
 export interface HttpInterceptor {
   /**
