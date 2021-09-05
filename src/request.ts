@@ -87,16 +87,18 @@ export class HttpRequest<T = any> {
   }
 
   private invokeInterceptorsBeforeMethod(): void {
-    this.context.interceptors.forEach(i => {
-      const context = i.before?.({
-        url: this.context.url,
-        method: this.context.method,
-        isDebugEnabled: this.context.isDebugEnabled,
-        responseType: this.context.responseType,
-        headers: HttpHeaders.fromHeaders(this.requestInit.headers as Headers),
+    this.context.interceptors
+      .filter(i => i.before)
+      .forEach(i => {
+        const context = i.before({
+          url: this.context.url,
+          method: this.context.method,
+          isDebugEnabled: this.context.isDebugEnabled,
+          responseType: this.context.responseType,
+          headers: HttpHeaders.fromHeaders(this.requestInit.headers as Headers),
+        });
+        this.httpHeadersToHeaders(context.headers);
       });
-      this.httpHeadersToHeaders(context.headers);
-    });
   }
 
   private invokeInterceptorsAfterMethod(response: HttpResponse): void {
