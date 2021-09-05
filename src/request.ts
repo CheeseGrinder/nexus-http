@@ -8,7 +8,7 @@ import { HttpBodyInit, HttpHeadersInit } from './types';
 export interface RequestContext {
   url: string;
   method: HttpMethod;
-  enableDebug: boolean;
+  enableDebug?: boolean;
   responseType?: HttpResponseType;
 }
 
@@ -50,7 +50,7 @@ export class HttpRequest<T = any> {
 
       this.initHeaders();
       options.headers.foreach((name, values) => {
-        (this.requestInit.headers as Headers).set(name, values.join(', '));
+        (this.requestInit.headers as Headers).set(name, values.join('; '));
       });
     }
     this.context.responseType = options.responseType ?? 'json';
