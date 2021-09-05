@@ -5,6 +5,7 @@ import { HttpHeaders } from './headers';
 import { HttpMethod } from './method.enum';
 import { HttpResponse, HttpResponseType } from './response';
 import { HttpBodyInit, HttpHeadersInit, RequestContext, InterceptorContext } from './types';
+import { InitHeadersInterceptor } from 'interceptors';
 
 interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'method' | 'window' | 'headers'>> {
   headers?: HttpHeaders | HttpHeadersInit;
@@ -56,6 +57,7 @@ export class HttpRequest<T = any> {
   }
 
   fetch(): HttpResponseHandler<T> {
+    this.context.interceptors.unshift(new InitHeadersInterceptor());
     this.invokeInterceptorsBeforeMethod();
 
     const { isDebugEnabled, url } = this.context;
