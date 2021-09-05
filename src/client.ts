@@ -1,6 +1,6 @@
-import { HttpInterceptor } from './types';
 import { HttpMethod } from './method.enum';
 import { HttpRequest } from './request';
+import { HttpInterceptor } from './types';
 
 type HttpQueryParamValue = string | number | bigint | boolean;
 export type HttpQueryParam = Record<string, HttpQueryParamValue> | { [key: string]: HttpQueryParamValue };

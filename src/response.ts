@@ -1,6 +1,6 @@
-import { HttpStatusCode } from './status-code.enum';
 import { HttpHeaders } from './headers';
 import { HttpMethod } from './method.enum';
+import { HttpStatusCode } from './status-code.enum';
 import { RequestContext } from './types';
 
 export type HttpResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer';

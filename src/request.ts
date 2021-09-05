@@ -1,11 +1,10 @@
-import { HttpInterceptor } from './types';
 import { BodyError } from './errors';
 import { HttpHandler, HttpResponseHandler } from './handler';
 import { HttpHeaders } from './headers';
+import { InitHeadersInterceptor } from './interceptors';
 import { HttpMethod } from './method.enum';
 import { HttpResponse, HttpResponseType } from './response';
-import { HttpBodyInit, HttpHeadersInit, RequestContext, InterceptorContext } from './types';
-import { InitHeadersInterceptor } from 'interceptors';
+import { HttpBodyInit, HttpHeadersInit, HttpInterceptor, InterceptorContext, RequestContext } from './types';
 
 interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'method' | 'window' | 'headers'>> {
   headers?: HttpHeaders | HttpHeadersInit;
