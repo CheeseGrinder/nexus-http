@@ -1,3 +1,4 @@
+import { HttpInterceptor } from 'types/interceptor';
 import { HttpMethod } from './method.enum';
 import { HttpRequest } from './request';
 
@@ -6,7 +7,7 @@ export type HttpQueryParam = Record<string, HttpQueryParamValue> | { [key: strin
 
 interface CreateOptions {
   baseUrl?: string;
-  enableDebug?: boolean;
+  isDebugEnabled?: boolean;
 }
 
 interface PrepareOptions {
@@ -18,7 +19,7 @@ export class NexusClient {
   static create(options: CreateOptions = {} as CreateOptions): NexusClient {
     const client = new NexusClient();
     client.baseUrl = options.baseUrl ?? '';
-    client.enableDebug = options.enableDebug ?? false;
+    client.isDebugEnabled = options.isDebugEnabled ?? false;
 
     return client;
   }
@@ -26,13 +27,14 @@ export class NexusClient {
   static copy(other: NexusClient): NexusClient {
     const client = new NexusClient();
     client.baseUrl = other.baseUrl;
-    client.enableDebug = other.enableDebug;
+    client.isDebugEnabled = other.isDebugEnabled;
 
     return client;
   }
 
   protected baseUrl: string;
-  protected enableDebug = false;
+  protected isDebugEnabled = false;
+  protected interceptors: HttpInterceptor[] = [];
 
   get<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
     return this.makeRequest<T>(HttpMethod.GET, url, query);
@@ -73,6 +75,11 @@ export class NexusClient {
     });
   }
 
+  addGlobalInterceptor(...interceptors: HttpInterceptor[]): ThisType<this> {
+    this.interceptors.push(...interceptors);
+    return this;
+  }
+
   private buildUrlWithQuery(url: string, query: HttpQueryParam = {}): string {
     if (Object.keys(query).length === 0) return this.formatUrl(url);
 
@@ -102,10 +109,13 @@ export class NexusClient {
   }
 
   private prepare<T>(options: PrepareOptions): HttpRequest<T> {
+    const interceptors = this.interceptors.filter(i => i.allowedMethod.includes(options.method));
+
     return new HttpRequest<T>({
       ...options,
-      enableDebug: this.enableDebug,
+      isDebugEnabled: this.isDebugEnabled,
       responseType: 'json',
+      interceptors: interceptors,
     });
   }
 }

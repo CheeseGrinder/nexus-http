@@ -1,16 +1,10 @@
+import { HttpInterceptor } from 'types/interceptor';
 import { BodyError } from './errors';
 import { HttpHandler, HttpResponseHandler } from './handler';
 import { HttpHeaders } from './headers';
 import { HttpMethod } from './method.enum';
 import { HttpResponse, HttpResponseType } from './response';
-import { HttpBodyInit, HttpHeadersInit } from './types';
-
-export interface RequestContext {
-  url: string;
-  method: HttpMethod;
-  enableDebug?: boolean;
-  responseType?: HttpResponseType;
-}
+import { HttpBodyInit, HttpHeadersInit, RequestContext, InterceptorContext } from './types';
 
 interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'method' | 'window' | 'headers'>> {
   headers?: HttpHeaders | HttpHeadersInit;
@@ -27,8 +21,9 @@ export class HttpRequest<T = any> {
 
   constructor(context: RequestContext) {
     this.context = context;
+    this.context.interceptors ??= [];
     this.requestInit.method = this.context.method;
-    this.initHeaders();
+    this.requestInit.headers = new Headers();
   }
 
   body(data: HttpBodyInit): HttpRequest<T> {
@@ -48,34 +43,40 @@ export class HttpRequest<T = any> {
     if (options.headers) {
       if (!(options.headers instanceof HttpHeaders)) options.headers = new HttpHeaders(options.headers);
 
-      this.initHeaders();
-      options.headers.foreach((name, values) => {
-        (this.requestInit.headers as Headers).set(name, values.join('; '));
-      });
+      this.httpHeadersToHeaders(options.headers);
     }
     this.context.responseType = options.responseType ?? 'json';
 
     return this;
   }
 
+  addInterceptors(...interceptors: HttpInterceptor[]): ThisType<this> {
+    this.context.interceptors.push(...interceptors);
+    return this;
+  }
+
   fetch(): HttpResponseHandler<T> {
-    const { enableDebug, url } = this.context;
+    this.invokeInterceptorsBeforeMethod();
+
+    const { isDebugEnabled, url } = this.context;
     const emmiter = new HttpHandler<T>();
     const request = new Request(url, this.requestInit);
 
     fetch(request)
       .then(response => HttpResponse.fromResponse<T>(response, this.context))
       .then(response => {
+        this.invokeInterceptorsAfterMethod(response);
+
         const event = response.ok ? 'success' : 'error';
-        enableDebug && console.log('[client] emit', event);
+        isDebugEnabled && console.log('[client] emit', event);
         emmiter.emit(event, response);
       })
       .catch(err => {
-        enableDebug && console.log('[client] emit error');
+        isDebugEnabled && console.log('[client] emit error');
         emmiter.emit('error', err);
       })
       .finally(() => {
-        enableDebug && console.log('[client] emit complete');
+        isDebugEnabled && console.log('[client] emit complete');
         emmiter.emit('complete');
       });
 
@@ -84,25 +85,34 @@ export class HttpRequest<T = any> {
     };
   }
 
-  private initHeaders() {
-    const headers = new Headers();
+  private invokeInterceptorsBeforeMethod(): void {
+    this.context.interceptors.forEach(i => {
+      const context = i.before?.({
+        url: this.context.url,
+        method: this.context.method,
+        isDebugEnabled: this.context.isDebugEnabled,
+        responseType: this.context.responseType,
+        headers: HttpHeaders.fromHeaders(this.requestInit.headers as Headers),
+      });
+      this.httpHeadersToHeaders(context.headers);
+    });
+  }
 
-    headers.append('Accept', 'application/json, text/plain, */*');
-    switch (this.context.responseType) {
-      case 'blob':
-      case 'arrayBuffer':
-        headers.append('Content-Type', 'application/octet-stream; charset=UTF-8');
-        break;
-      case 'text':
-        headers.append('Content-Type', 'text/*; charset=UTF-8');
-        break;
+  private invokeInterceptorsAfterMethod(response: HttpResponse): void {
+    const context: InterceptorContext = {
+      url: response.url,
+      method: response.method,
+      isDebugEnabled: this.context.isDebugEnabled,
+      responseType: response.type,
+      headers: response.headers,
+    };
 
-      case 'json':
-      default:
-        headers.append('Content-Type', 'application/json; charset=UTF-8');
-        break;
-    }
+    this.context.interceptors.forEach(i => i.after?.(context));
+  }
 
-    this.requestInit.headers = headers;
+  private httpHeadersToHeaders(headers: HttpHeaders): void {
+    headers.foreach((name, values) => {
+      (this.requestInit.headers as Headers).set(name, values.join('; '));
+    });
   }
 }

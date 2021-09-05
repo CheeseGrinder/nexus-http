@@ -1,7 +1,7 @@
 import { HttpStatusCode } from 'status-code.enum';
 import { HttpHeaders } from './headers';
 import { HttpMethod } from './method.enum';
-import { RequestContext } from './request';
+import { RequestContext } from './types';
 
 export type HttpResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer';
 
@@ -38,7 +38,7 @@ export class HttpResponse<T = any> implements HttpResponseInit<T> {
   }
 
   static async fromResponse<T>(response: Response, context: RequestContext): Promise<HttpResponse<T>> {
-    context.enableDebug && console.log('[Client] Build response');
+    context.isDebugEnabled && console.log('[Client] Build response');
 
     const headers = HttpHeaders.fromHeaders(response.headers);
     const body = await response[context.responseType]();
