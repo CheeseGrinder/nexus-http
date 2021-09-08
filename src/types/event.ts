@@ -2,7 +2,7 @@ import { HttpResponse } from '../response';
 
 interface HttpError {
   message: string;
-  error: Error | any;
+  error: Error | unknown;
 }
 
 export interface HttpEvent<T> {

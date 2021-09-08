@@ -71,7 +71,7 @@ export class NexusClient {
   makeRequest<T>(method: HttpMethod, url: string, query?: HttpQueryParam): HttpRequest<T> {
     return this.prepare({
       url: this.buildUrlWithQuery(url, query),
-      method: method,
+      method: method
     });
   }
 
@@ -115,7 +115,7 @@ export class NexusClient {
       ...options,
       isDebugEnabled: this.isDebugEnabled,
       responseType: 'json',
-      interceptors: interceptors,
+      interceptors: interceptors
     });
   }
 }

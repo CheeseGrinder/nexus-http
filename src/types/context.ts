@@ -1,3 +1,4 @@
+import { HttpHeadersInit } from 'types';
 import { HttpHeaders } from '../headers';
 import { HttpMethod } from '../method.enum';
 import { HttpResponseType } from '../response';
@@ -6,9 +7,10 @@ import { HttpInterceptor } from './interceptor';
 export interface RequestContext {
   url: string;
   method: HttpMethod;
-  isDebugEnabled?: boolean;
+  headers?: HttpHeaders | HttpHeadersInit;
+  interceptors?: HttpInterceptor[];
   responseType?: HttpResponseType;
-  interceptors: HttpInterceptor[];
+  isDebugEnabled?: boolean;
 }
 
 export interface InterceptorContext {

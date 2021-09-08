@@ -1,7 +1,7 @@
 import { HttpResponse } from './response';
 import { HttpEvent } from './types';
 
-type HttpHandlerInit<T = any> = (value: HttpResponse<T>) => void | VoidFunction;
+type HttpHandlerInit<T = unknown> = (value: HttpResponse<T>) => void | VoidFunction;
 export type HttpObserver<T> = HttpEvent<T> | HttpHandlerInit<T>;
 
 type HandlerEvent = 'success' | 'error' | 'complete';

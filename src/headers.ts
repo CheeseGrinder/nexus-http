@@ -3,12 +3,10 @@ import { HttpHeadersInit } from './types';
 type HttpHeadersValue = string | string[];
 
 export class HttpHeaders {
-  private headers: Map<string, string[]>;
+  private headers: Map<string, string[]> = new Map();
 
   /** Constructs a new HTTP header object with the given values. */
   constructor(headers?: HttpHeadersInit) {
-    this.headers = new Map();
-
     if (typeof headers === 'string') {
       headers
         .split('\n')
@@ -129,7 +127,7 @@ export class HttpHeaders {
     const headers = new HttpHeaders();
     if (!other) return headers;
 
-    [...(other as any).keys()].forEach(key => headers.set(key, other.get(key).split(/;\s*?/)));
+    other.forEach((value, key) => headers.set(key, value));
 
     return headers;
   }

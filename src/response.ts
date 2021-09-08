@@ -16,7 +16,7 @@ interface HttpResponseInit<T> {
   readonly type: HttpResponseType;
 }
 
-export class HttpResponse<T = any> implements HttpResponseInit<T> {
+export class HttpResponse<T = unknown> implements HttpResponseInit<T> {
   readonly url: string;
   readonly method: HttpMethod;
   readonly headers: HttpHeaders;
@@ -55,9 +55,9 @@ export class HttpResponse<T = any> implements HttpResponseInit<T> {
       body: hasErrorField
         ? {
             message: body.message,
-            error: body.error,
+            error: body.error
           }
-        : body,
+        : body
     });
   }
 }

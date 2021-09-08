@@ -6,7 +6,7 @@ describe('client', () => {
 
   beforeEach(() => {
     client = NexusClient.create({
-      baseUrl: 'http://localhost/',
+      baseUrl: 'http://localhost/'
     });
   });
 
@@ -22,6 +22,7 @@ describe('client', () => {
     it('should be return the same url if no params is given', () => {
       const received = (client as any as ClientTest).buildUrlWithQuery('/test');
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test');
     });
 
@@ -29,9 +30,10 @@ describe('client', () => {
       const received = (client as any as ClientTest).buildUrlWithQuery('/test', {
         page: 1,
         limit: 10,
-        test: 'string',
+        test: 'string'
       });
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test?page=1&limit=10&test=string');
     });
 
@@ -39,18 +41,20 @@ describe('client', () => {
       const received = (client as any as ClientTest).buildUrlWithQuery('/test?', {
         page: 1,
         limit: 10,
-        test: 'string',
+        test: 'string'
       });
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test?page=1&limit=10&test=string');
     });
 
     it('should be add query params in url', () => {
       const received = (client as any as ClientTest).buildUrlWithQuery('/test?test=string', {
         page: 1,
-        limit: 10,
+        limit: 10
       });
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test?test=string&page=1&limit=10');
     });
   });
@@ -58,31 +62,35 @@ describe('client', () => {
   describe('method: formatUrl()', () => {
     it('should be add an "/"', () => {
       client = NexusClient.create({
-        baseUrl: 'http://localhost',
+        baseUrl: 'http://localhost'
       });
       const received = (client as any as ClientTest).formatUrl('test');
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test');
     });
 
     it('should be concat baseUrl & given url, when baseUrl end with "/"', () => {
       const received = (client as any as ClientTest).formatUrl('test');
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test');
     });
 
     it('should be concat baseUrl & given url, when url end with "/"', () => {
       client = NexusClient.create({
-        baseUrl: 'http://localhost',
+        baseUrl: 'http://localhost'
       });
       const received = (client as any as ClientTest).formatUrl('/test');
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test');
     });
 
     it('should be have one "/" when baseUrl end with "/" & url start with "/"', () => {
       const received = (client as any as ClientTest).formatUrl('/test');
 
+      expect(received).toBeDefined();
       expect(received).toBe('http://localhost/test');
     });
   });

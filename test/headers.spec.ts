@@ -19,6 +19,7 @@ describe('Headers', () => {
     it('should be not have "Content-Type"', () => {
       const received = emptyHeaders.has('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe(false);
     });
 
@@ -26,6 +27,7 @@ describe('Headers', () => {
       emptyHeaders.set('Content-Type', 'application/json');
       const received = emptyHeaders.has('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe(true);
     });
   });
@@ -34,6 +36,7 @@ describe('Headers', () => {
     it('should be null', () => {
       const received = emptyHeaders.get('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBeNull();
     });
 
@@ -41,6 +44,7 @@ describe('Headers', () => {
       emptyHeaders.set('Content-Type', 'application/json');
       const received = emptyHeaders.get('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe('application/json');
     });
   });
@@ -49,6 +53,7 @@ describe('Headers', () => {
     it('should be empty array', () => {
       const received = emptyHeaders.keys();
 
+      expect(received).toBeDefined();
       expect(received).toBeInstanceOf(Array);
       expect(received.length).toBe(0);
     });
@@ -57,6 +62,7 @@ describe('Headers', () => {
       emptyHeaders.set('Content-Type', 'application/json');
       const received = emptyHeaders.keys();
 
+      expect(received).toBeDefined();
       expect(received).toBeInstanceOf(Array);
       expect(received.length).toBe(1);
       expect(received[0]).toBe('Content-Type');
@@ -67,6 +73,7 @@ describe('Headers', () => {
     it('should be null', () => {
       const received = emptyHeaders.getAll('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBeNull();
     });
 
@@ -74,6 +81,7 @@ describe('Headers', () => {
       emptyHeaders.set('Content-Type', 'application/json');
       const received = emptyHeaders.getAll('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBeInstanceOf(Array);
       expect(received.length).toBe(1);
       expect(received[0]).toBe('application/json');
@@ -85,6 +93,7 @@ describe('Headers', () => {
       emptyHeaders.set('Content-Type', 'application/json');
       const received = emptyHeaders.get('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe('application/json');
     });
 
@@ -93,6 +102,7 @@ describe('Headers', () => {
       emptyHeaders.set('Content-Type', 'application/json');
       const received = emptyHeaders.get('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe('application/json');
     });
   });
@@ -106,6 +116,7 @@ describe('Headers', () => {
       emptyHeaders.delete('Content-Type');
       const received = emptyHeaders.has('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe(false);
     });
 
@@ -114,6 +125,7 @@ describe('Headers', () => {
       const received = emptyHeaders.has('Content-Type');
       const values = emptyHeaders.getAll('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe(true);
       expect(values).toBeInstanceOf(Array);
       expect(values.length).toBe(2);
@@ -126,6 +138,7 @@ describe('Headers', () => {
       const received = emptyHeaders.has('Content-Type');
       const values = emptyHeaders.getAll('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe(true);
       expect(values).toBeInstanceOf(Array);
       expect(values.length).toBe(1);
@@ -139,6 +152,7 @@ describe('Headers', () => {
       const received = emptyHeaders.has('Content-Type');
       const values = emptyHeaders.getAll('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe(true);
       expect(values).toBeInstanceOf(Array);
       expect(values.length).toBe(1);
@@ -151,6 +165,7 @@ describe('Headers', () => {
       const received = emptyHeaders.has('Content-Type');
       const values = emptyHeaders.getAll('Content-Type');
 
+      expect(received).toBeDefined();
       expect(received).toBe(true);
       expect(values).toBeInstanceOf(Array);
       expect(values.length).toBe(2);

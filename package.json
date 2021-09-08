@@ -1,6 +1,6 @@
 {
   "name": "nexus-http",
-  "version": "1.1.0-rc1",
+  "version": "1.1.0-rc2",
   "description": "nexus-http is a simple http client that allows you to make requests easily.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,10 +10,10 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "start": "tsc -w",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"{src,test}/**/*.ts\"",
+    "check": "prettier --check \"{src,test}/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },

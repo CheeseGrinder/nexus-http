@@ -15,13 +15,16 @@ interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'metho
   responseType?: HttpResponseType;
 }
 
-export class HttpRequest<T = any> {
+export class HttpRequest<T = unknown> {
   private context: RequestContext = {} as RequestContext;
   private requestInit: RequestInit = {};
 
   constructor(context: RequestContext) {
-    this.context = context;
+    const { headers } = context;
+
+    this.context = { ...context };
     this.context.interceptors ??= [];
+    this.context.headers = headers instanceof HttpHeaders ? headers : new HttpHeaders(headers);
     this.requestInit.method = this.context.method;
     this.requestInit.headers = new Headers();
   }
@@ -43,7 +46,7 @@ export class HttpRequest<T = any> {
     if (options.headers) {
       if (!(options.headers instanceof HttpHeaders)) options.headers = new HttpHeaders(options.headers);
 
-      this.httpHeadersToHeaders(options.headers);
+      options.headers.foreach((name, values) => (this.context.headers as HttpHeaders).append(name, values));
     }
     this.context.responseType = options.responseType ?? 'json';
 
@@ -82,20 +85,20 @@ export class HttpRequest<T = any> {
       });
 
     return {
-      handle: emmiter.handler.bind(emmiter),
+      handle: emmiter.handler.bind(emmiter)
     };
   }
 
   private invokeInterceptorsBeforeMethod(): void {
     this.context.interceptors
       .filter(i => i.before)
-      .forEach(i => {
-        const context = i.before({
+      .forEach(interceptor => {
+        const context = interceptor.before({
           url: this.context.url,
           method: this.context.method,
           isDebugEnabled: this.context.isDebugEnabled,
           responseType: this.context.responseType,
-          headers: HttpHeaders.fromHeaders(this.requestInit.headers as Headers),
+          headers: this.context.headers as HttpHeaders
         });
         this.httpHeadersToHeaders(context.headers);
       });
@@ -107,7 +110,7 @@ export class HttpRequest<T = any> {
       method: response.method,
       isDebugEnabled: this.context.isDebugEnabled,
       responseType: response.type,
-      headers: response.headers,
+      headers: response.headers
     };
 
     this.context.interceptors.forEach(i => i.after?.(context));
@@ -115,7 +118,7 @@ export class HttpRequest<T = any> {
 
   private httpHeadersToHeaders(headers: HttpHeaders): void {
     headers.foreach((name, values) => {
-      (this.requestInit.headers as Headers).set(name, values.join('; '));
+      this.requestInit.headers[name] = values.join('; ');
     });
   }
 }

@@ -6,5 +6,5 @@ export enum HttpMethod {
   DELETE = 'DELETE',
   HEAD = 'HEAD',
   OPTIONS = 'OPTIONS',
-  TRACE = 'TRACE',
+  TRACE = 'TRACE'
 }
