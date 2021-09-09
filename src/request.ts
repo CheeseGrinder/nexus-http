@@ -1,5 +1,5 @@
 import { BodyError } from './errors';
-import { HttpHandler, HttpResponseHandler } from './handler';
+import { HttpHandler, HttpObserver, HttpResponseHandler } from './handler';
 import { HttpHeaders } from './headers';
 import { InitHeadersInterceptor } from './interceptors';
 import { HttpMethod } from './method.enum';
@@ -95,8 +95,17 @@ export class HttpRequest<T = unknown> {
         emmiter.emit('complete');
       });
 
+    const handler = emmiter.handler.bind(emmiter) as (handler: HttpObserver<T>) => void;
     return {
-      handle: emmiter.handler.bind(emmiter)
+      handle: handler,
+      toPromise: () => {
+        return new Promise<HttpResponse<T>>((resolve, reject) => {
+          handler({
+            success: data => resolve(data),
+            error: err => reject(err)
+          });
+        });
+      }
     };
   }
 

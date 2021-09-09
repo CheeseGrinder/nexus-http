@@ -31,4 +31,5 @@ export class HttpHandler<T> {
 
 export interface HttpResponseHandler<T> {
   handle: (handler: HttpObserver<T>) => void;
+  toPromise: () => Promise<HttpResponse<T>>;
 }

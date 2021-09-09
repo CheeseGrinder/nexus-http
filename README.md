@@ -29,8 +29,8 @@ import { NexusClient } from 'nexus-http';
 
 // Several ways to create an instance
 const client = new NexusClient();
-const client = NexusClient.crete();
-const client = NexusClient.crete({
+const client = NexusClient.create();
+const client = NexusClient.create({
   baseUrl: 'http://localhost:3000/',
   enableDebug: true,
 });
@@ -56,6 +56,30 @@ client
     complete: () => {
       // Add some logic after success or error
     },
+  });
+```
+
+You can convert the response to `Promise`.
+
+```ts
+// In this case, we assume that we have defined a baseUrl.
+client
+  .post<{ message: string }>('/users') // final url : http://localhosst:3000/users
+  .body({
+    username: 'CheeseGrinder',
+  })
+  .fetch()
+  .toPromise()
+  .then(data => {
+    // data type: HttpResponse<{ message: string }>
+    // Add some logic on success
+  })
+  .catch(data => {
+    // data type: HttpResponse<HttpError>
+    // Add some logic on success
+  })
+  .finnally(() => {
+    // Add some logic after success or error
   });
 ```
 
