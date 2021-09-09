@@ -37,7 +37,7 @@ export class HttpRequest<T = unknown> {
     this.requestInit.headers = new Headers();
   }
 
-  body(data: HttpBodyInit): ThisType<this> {
+  body(data: HttpBodyInit): HttpRequest<T> {
     if (![HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH].includes(this.context.method))
       throw new BodyError({ method: this.context.method });
 
@@ -46,7 +46,7 @@ export class HttpRequest<T = unknown> {
     return this;
   }
 
-  configure(options: RequestConfigOptions): ThisType<this> {
+  configure(options: RequestConfigOptions): HttpRequest<T> {
     Object.entries(options)
       .filter(([key]) => !['headers', 'responseType'].includes(key))
       .forEach(([key, value]) => (this.requestInit[key] = value));
@@ -61,7 +61,7 @@ export class HttpRequest<T = unknown> {
     return this;
   }
 
-  addInterceptors(...interceptors: HttpInterceptor[]): ThisType<this> {
+  addInterceptors(...interceptors: HttpInterceptor[]): HttpRequest<T> {
     const requestInterceptor = interceptors
       .filter(i => i.allowedMethod.includes(this.context.method))
       .filter(i => this.context.interceptors.findIndex(gi => gi.name === i.name) === -1);

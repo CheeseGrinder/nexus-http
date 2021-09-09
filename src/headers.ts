@@ -75,7 +75,7 @@ export class HttpHeaders {
    * @param name The header name.
    * @param value The value or values to set or overide for the given header.
    */
-  set(name: string, values: HttpHeadersValue): ThisType<this> {
+  set(name: string, values: HttpHeadersValue): HttpHeaders {
     this.delete(name);
     this.append(name, values);
 
@@ -88,7 +88,7 @@ export class HttpHeaders {
    * @param {string} name The header name.
    * @param {string | string[]} [value] The value or values to delete for the given header.
    */
-  delete(name: string, values?: HttpHeadersValue): ThisType<this> {
+  delete(name: string, values?: HttpHeadersValue): HttpHeaders {
     const trimedName = name.trim();
     if (!this.headers.has(trimedName)) return this;
     if (!values) {
@@ -110,7 +110,7 @@ export class HttpHeaders {
    * @param name The header name.
    * @param value The value or values to set or overide for the given header.
    */
-  append(key: string, values: HttpHeadersValue): ThisType<this> {
+  append(key: string, values: HttpHeadersValue): HttpHeaders {
     const trimedKey = key.trim();
     if (!this.headers.has(trimedKey)) this.headers.set(trimedKey, []);
     if (!Array.isArray(values)) values = [values];
