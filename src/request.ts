@@ -114,9 +114,11 @@ export class HttpRequest<T = unknown> {
         });
         context.headers.foreach((name, values) => this.finalHeaders.append(name, values));
       });
+    const headers = {};
     this.finalHeaders.foreach((name, values) => {
-      this.requestInit.headers[name] = values.join('; ');
+      headers[name] = values.join('; ');
     });
+    this.requestInit.headers = headers;
   }
 
   private invokeInterceptorsAfterMethod(response: HttpResponse): void {
