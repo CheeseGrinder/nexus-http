@@ -6,6 +6,7 @@ import { Headers } from './mocks/headers';
 import { Request } from './mocks/request';
 
 class TestInterceptor implements HttpInterceptor {
+  name = 'test-interceptor';
   allowedMethod = [HttpMethod.GET];
 
   before(context: InterceptorContext): InterceptorContext {

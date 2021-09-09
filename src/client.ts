@@ -3,7 +3,7 @@ import { HttpRequest } from './request';
 import { HttpInterceptor } from './types';
 
 type HttpQueryParamValue = string | number | bigint | boolean;
-export type HttpQueryParam = Record<string, HttpQueryParamValue> | { [key: string]: HttpQueryParamValue };
+export type HttpQueryParam = Record<string, HttpQueryParamValue>;
 
 interface CreateOptions {
   baseUrl?: string;
@@ -34,7 +34,7 @@ export class NexusClient {
 
   protected baseUrl: string;
   protected isDebugEnabled = false;
-  protected interceptors: HttpInterceptor[] = [];
+  protected interceptors: Map<string, HttpInterceptor> = new Map();
 
   get<T>(url: string, query?: HttpQueryParam): HttpRequest<T> {
     return this.makeRequest<T>(HttpMethod.GET, url, query);
@@ -76,7 +76,7 @@ export class NexusClient {
   }
 
   addGlobalInterceptor(...interceptors: HttpInterceptor[]): ThisType<this> {
-    this.interceptors.push(...interceptors);
+    interceptors.forEach(i => this.interceptors.has(i.name) || this.interceptors.set(i.name, i));
     return this;
   }
 
@@ -109,7 +109,7 @@ export class NexusClient {
   }
 
   private prepare<T>(options: PrepareOptions): HttpRequest<T> {
-    const interceptors = this.interceptors.filter(i => i.allowedMethod.includes(options.method));
+    const interceptors = [...this.interceptors.values()].filter(i => i.allowedMethod.includes(options.method));
 
     return new HttpRequest<T>({
       ...options,

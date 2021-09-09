@@ -4,7 +4,14 @@ import { HttpHeaders } from './headers';
 import { InitHeadersInterceptor } from './interceptors';
 import { HttpMethod } from './method.enum';
 import { HttpResponse, HttpResponseType } from './response';
-import { HttpBodyInit, HttpHeadersInit, HttpInterceptor, InterceptorContext, RequestContext } from './types';
+import {
+  HttpBodyInit,
+  HttpHeadersInit,
+  HttpInterceptor,
+  InterceptorContext,
+  RequestContext,
+  RequestContextInit
+} from './types';
 
 interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'method' | 'window' | 'headers'>> {
   headers?: HttpHeaders | HttpHeadersInit;
@@ -18,18 +25,19 @@ interface RequestConfigOptions extends Partial<Omit<RequestInit, 'body' | 'metho
 export class HttpRequest<T = unknown> {
   private context: RequestContext = {} as RequestContext;
   private requestInit: RequestInit = {};
+  private finalHeaders: HttpHeaders = new HttpHeaders();
 
-  constructor(context: RequestContext) {
-    const { headers } = context;
+  constructor(context: RequestContextInit) {
+    const { headers, ...rest } = context;
 
-    this.context = { ...context };
+    this.context = rest;
     this.context.interceptors ??= [];
     this.context.headers = headers instanceof HttpHeaders ? headers : new HttpHeaders(headers);
     this.requestInit.method = this.context.method;
     this.requestInit.headers = new Headers();
   }
 
-  body(data: HttpBodyInit): HttpRequest<T> {
+  body(data: HttpBodyInit): ThisType<this> {
     if (![HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH].includes(this.context.method))
       throw new BodyError({ method: this.context.method });
 
@@ -38,7 +46,7 @@ export class HttpRequest<T = unknown> {
     return this;
   }
 
-  configure(options: RequestConfigOptions): HttpRequest<T> {
+  configure(options: RequestConfigOptions): ThisType<this> {
     Object.entries(options)
       .filter(([key]) => !['headers', 'responseType'].includes(key))
       .forEach(([key, value]) => (this.requestInit[key] = value));
@@ -46,7 +54,7 @@ export class HttpRequest<T = unknown> {
     if (options.headers) {
       if (!(options.headers instanceof HttpHeaders)) options.headers = new HttpHeaders(options.headers);
 
-      options.headers.foreach((name, values) => (this.context.headers as HttpHeaders).append(name, values));
+      options.headers.foreach((name, values) => this.context.headers.append(name, values));
     }
     this.context.responseType = options.responseType ?? 'json';
 
@@ -54,7 +62,10 @@ export class HttpRequest<T = unknown> {
   }
 
   addInterceptors(...interceptors: HttpInterceptor[]): ThisType<this> {
-    this.context.interceptors.push(...interceptors);
+    const requestInterceptor = interceptors
+      .filter(i => i.allowedMethod.includes(this.context.method))
+      .filter(i => this.context.interceptors.findIndex(gi => gi.name === i.name) === -1);
+    this.context.interceptors.push(...requestInterceptor);
     return this;
   }
 
@@ -62,7 +73,7 @@ export class HttpRequest<T = unknown> {
     this.context.interceptors.unshift(new InitHeadersInterceptor());
     this.invokeInterceptorsBeforeMethod();
 
-    const { isDebugEnabled, url } = this.context;
+    const { url } = this.context;
     const emmiter = new HttpHandler<T>();
     const request = new Request(url, this.requestInit);
 
@@ -72,15 +83,15 @@ export class HttpRequest<T = unknown> {
         this.invokeInterceptorsAfterMethod(response);
 
         const event = response.ok ? 'success' : 'error';
-        isDebugEnabled && console.log('[client] emit', event);
+        this.debugLogs('[client] emit', event);
         emmiter.emit(event, response);
       })
       .catch(err => {
-        isDebugEnabled && console.log('[client] emit error');
+        this.debugLogs('[client] emit error');
         emmiter.emit('error', err);
       })
       .finally(() => {
-        isDebugEnabled && console.log('[client] emit complete');
+        this.debugLogs('[client] emit complete');
         emmiter.emit('complete');
       });
 
@@ -93,6 +104,7 @@ export class HttpRequest<T = unknown> {
     this.context.interceptors
       .filter(i => i.before)
       .forEach(interceptor => {
+        this.debugLogs('[Before] Call interceptor: ', interceptor.name);
         const context = interceptor.before({
           url: this.context.url,
           method: this.context.method,
@@ -100,8 +112,11 @@ export class HttpRequest<T = unknown> {
           responseType: this.context.responseType,
           headers: this.context.headers as HttpHeaders
         });
-        this.httpHeadersToHeaders(context.headers);
+        context.headers.foreach((name, values) => this.finalHeaders.append(name, values));
       });
+    this.finalHeaders.foreach((name, values) => {
+      this.requestInit.headers[name] = values.join('; ');
+    });
   }
 
   private invokeInterceptorsAfterMethod(response: HttpResponse): void {
@@ -113,12 +128,13 @@ export class HttpRequest<T = unknown> {
       headers: response.headers
     };
 
-    this.context.interceptors.forEach(i => i.after?.(context));
+    this.context.interceptors.forEach(i => {
+      this.debugLogs('[After] Call interceptor: ', i.name);
+      i.after?.(context);
+    });
   }
 
-  private httpHeadersToHeaders(headers: HttpHeaders): void {
-    headers.foreach((name, values) => {
-      this.requestInit.headers[name] = values.join('; ');
-    });
+  private debugLogs(...data: any[]): void {
+    this.context.isDebugEnabled && console.log(...data);
   }
 }

@@ -3,6 +3,11 @@ import { InterceptorContext } from './context';
 
 export interface HttpInterceptor {
   /**
+   * interceptor ID
+   */
+  name: string;
+
+  /**
    * Allows to define on which methods the interceptors will be called.
    */
   allowedMethod: HttpMethod[];

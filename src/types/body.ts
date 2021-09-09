@@ -1,1 +1,1 @@
-export type HttpBodyInit = Record<string, unknown> | { [key: string]: unknown } | FormData;
+export type HttpBodyInit = Record<string, any> | FormData;

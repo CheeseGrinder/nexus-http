@@ -1,9 +1,10 @@
-import { HttpMethod } from '../method.enum';
 import { HttpInterceptor, InterceptorContext } from '../types';
 
 export class InitHeadersInterceptor implements HttpInterceptor {
+  name = 'nexus-init-headers';
+
   // This is a hack because we add it directly in request
-  allowedMethod: HttpMethod[] = [];
+  allowedMethod = [];
 
   before(context: InterceptorContext): InterceptorContext {
     context.headers.append('Accept', 'application/json, text/plain, */*');

@@ -75,9 +75,9 @@ export class HttpHeaders {
    * @param name The header name.
    * @param value The value or values to set or overide for the given header.
    */
-  set(name: string, value: HttpHeadersValue): HttpHeaders {
+  set(name: string, values: HttpHeadersValue): ThisType<this> {
     this.delete(name);
-    this.append(name, value);
+    this.append(name, values);
 
     return this;
   }
@@ -88,17 +88,17 @@ export class HttpHeaders {
    * @param {string} name The header name.
    * @param {string | string[]} [value] The value or values to delete for the given header.
    */
-  delete(name: string, value?: HttpHeadersValue): HttpHeaders {
+  delete(name: string, values?: HttpHeadersValue): ThisType<this> {
     const trimedName = name.trim();
     if (!this.headers.has(trimedName)) return this;
-    if (!value) {
+    if (!values) {
       this.headers.delete(trimedName);
       return this;
     }
-    if (!Array.isArray(value)) value = [value];
+    if (!Array.isArray(values)) values = [values];
 
-    const values = this.headers.get(trimedName).filter(h => !value.includes(h));
-    values.length === 0 ? this.headers.delete(trimedName) : this.headers.set(trimedName, values);
+    const residual = this.headers.get(trimedName).filter(h => !values.includes(h));
+    residual.length === 0 ? this.headers.delete(trimedName) : this.headers.set(trimedName, residual);
 
     return this;
   }
@@ -110,12 +110,13 @@ export class HttpHeaders {
    * @param name The header name.
    * @param value The value or values to set or overide for the given header.
    */
-  append(key: string, value: HttpHeadersValue): HttpHeaders {
+  append(key: string, values: HttpHeadersValue): ThisType<this> {
     const trimedKey = key.trim();
     if (!this.headers.has(trimedKey)) this.headers.set(trimedKey, []);
-    if (!Array.isArray(value)) value = [value];
+    if (!Array.isArray(values)) values = [values];
 
-    this.headers.get(trimedKey).push(...value);
+    const actual = this.headers.get(trimedKey);
+    actual.push(...values.filter(v => !actual.includes(v)));
     return this;
   }
 

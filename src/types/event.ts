@@ -1,9 +1,5 @@
+import { HttpError } from '../errors';
 import { HttpResponse } from '../response';
-
-interface HttpError {
-  message: string;
-  error: Error | unknown;
-}
 
 export interface HttpEvent<T> {
   success: (value: HttpResponse<T>) => void;
