@@ -41,7 +41,12 @@ export class HttpResponse<T = unknown> implements HttpResponseInit<T> {
     context.isDebugEnabled && console.log('[Client] Build response');
 
     const headers = HttpHeaders.fromHeaders(response.headers);
-    const body = await response[context.responseType]();
+    let body: any;
+    try {
+      body = await response[context.responseType]();
+    } catch (error) {
+      body = {};
+    }
     const hasErrorField = !!body.error;
 
     return new HttpResponse<T>({
