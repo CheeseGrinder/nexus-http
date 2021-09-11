@@ -1,6 +1,6 @@
 import { NexusClient } from 'client';
 import { HttpMethod } from 'method.enum';
-import { HttpInterceptor, InterceptorContext } from 'types';
+import { HttpInterceptor, InterceptorBeforeContext } from 'types';
 import { mockFetch } from './mocks/fetch';
 import { Headers } from './mocks/headers';
 import { Request } from './mocks/request';
@@ -9,7 +9,7 @@ class TestInterceptor implements HttpInterceptor {
   name = 'test-interceptor';
   allowedMethod = [HttpMethod.GET];
 
-  before(context: InterceptorContext): InterceptorContext {
+  before(context: InterceptorBeforeContext): InterceptorBeforeContext {
     return context;
   }
 }

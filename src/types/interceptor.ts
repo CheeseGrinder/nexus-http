@@ -1,5 +1,5 @@
 import { HttpMethod } from '../method.enum';
-import { InterceptorContext } from './context';
+import { InterceptorBeforeContext, InterceptorAfterContext } from './context';
 
 export interface HttpInterceptor {
   /**
@@ -17,12 +17,12 @@ export interface HttpInterceptor {
    *
    * @param {InterceptorContext} context The request context.
    */
-  before?: (context: InterceptorContext) => InterceptorContext;
+  before?: (context: InterceptorBeforeContext) => InterceptorBeforeContext;
 
   /**
    * Allows to get information from the response before the user receives it.
    *
    * @param {InterceptorContext} context The response context.
    */
-  after?: (context: InterceptorContext) => void;
+  after?: (context: InterceptorAfterContext) => void;
 }

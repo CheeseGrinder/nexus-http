@@ -1,4 +1,4 @@
-import { HttpInterceptor, InterceptorContext } from '../types';
+import { HttpInterceptor, InterceptorBeforeContext } from '../types';
 
 export class InitHeadersInterceptor implements HttpInterceptor {
   name = 'nexus-init-headers';
@@ -6,7 +6,7 @@ export class InitHeadersInterceptor implements HttpInterceptor {
   // This is a hack because we add it directly in request
   allowedMethod = [];
 
-  before(context: InterceptorContext): InterceptorContext {
+  before(context: InterceptorBeforeContext): InterceptorBeforeContext {
     context.headers.append('Accept', 'application/json, text/plain, */*');
     switch (context.responseType) {
       case 'blob':

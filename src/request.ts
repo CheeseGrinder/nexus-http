@@ -8,7 +8,7 @@ import {
   HttpBodyInit,
   HttpHeadersInit,
   HttpInterceptor,
-  InterceptorContext,
+  InterceptorAfterContext,
   RequestContext,
   RequestContextInit
 } from './types';
@@ -131,12 +131,14 @@ export class HttpRequest<T = unknown> {
   }
 
   private invokeInterceptorsAfterMethod(response: HttpResponse): void {
-    const context: InterceptorContext = {
+    const context: InterceptorAfterContext = {
       url: response.url,
       method: response.method,
       isDebugEnabled: this.context.isDebugEnabled,
       responseType: response.type,
-      headers: response.headers
+      headers: response.headers,
+      statusCode: response.status,
+      ok: response.ok
     };
 
     this.context.interceptors.forEach(i => {

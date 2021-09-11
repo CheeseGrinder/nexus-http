@@ -1,3 +1,4 @@
+import { HttpStatusCode } from 'status-code.enum';
 import { HttpHeaders } from '../headers';
 import { HttpMethod } from '../method.enum';
 import { HttpResponseType } from '../response';
@@ -16,10 +17,15 @@ export interface RequestContextInit {
 export interface RequestContext extends RequestContextInit {
   headers?: HttpHeaders;
 }
-export interface InterceptorContext {
+export interface InterceptorBeforeContext {
   readonly url: string;
   readonly method: HttpMethod;
   readonly headers: HttpHeaders;
   readonly isDebugEnabled: boolean;
   readonly responseType: HttpResponseType;
+}
+
+export interface InterceptorAfterContext extends InterceptorBeforeContext {
+  readonly statusCode: HttpStatusCode;
+  readonly ok: boolean;
 }
