@@ -1,4 +1,4 @@
-import { RequestContext } from 'types';
+import { RequestContext } from '../../src/types';
 
 export interface RequestTest {
   context: RequestContext;

@@ -1,7 +1,7 @@
-import { HttpStatusCode } from 'status-code.enum';
 import { HttpHeaders } from '../headers';
 import { HttpMethod } from '../method.enum';
 import { HttpResponseType } from '../response';
+import { HttpStatusCode } from '../status-code.enum';
 import { HttpHeadersInit } from './headers';
 import { HttpInterceptor } from './interceptor';
 

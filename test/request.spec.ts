@@ -1,7 +1,7 @@
-import { BodyError } from 'errors';
-import { HttpHeaders } from 'headers';
-import { HttpMethod } from 'method.enum';
-import { HttpRequest } from 'request';
+import { BodyError } from '../src/errors';
+import { HttpHeaders } from '../src/headers';
+import { HttpMethod } from '../src/method.enum';
+import { HttpRequest } from '../src/request';
 import { Headers } from './mocks/headers';
 import { RequestTest } from './utils/request-test';
 

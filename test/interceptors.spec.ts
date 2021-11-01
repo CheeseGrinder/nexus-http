@@ -1,6 +1,6 @@
-import { NexusClient } from 'client';
-import { HttpMethod } from 'method.enum';
-import { HttpInterceptor, InterceptorBeforeContext } from 'types';
+import { NexusClient } from '../src/client';
+import { HttpMethod } from '../src/method.enum';
+import { HttpInterceptor, InterceptorBeforeContext } from '../src/types';
 import { mockFetch } from './mocks/fetch';
 import { Headers } from './mocks/headers';
 import { Request } from './mocks/request';

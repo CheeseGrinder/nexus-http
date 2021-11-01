@@ -1,4 +1,4 @@
-import { HttpHeaders } from 'headers';
+import { HttpHeaders } from '../src/headers';
 
 describe('Headers', () => {
   let emptyHeaders: HttpHeaders;

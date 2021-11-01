@@ -1,4 +1,4 @@
-import { HttpQueryParam } from 'client';
+import { HttpQueryParam } from '../../src/client';
 
 export interface ClientTest {
   buildUrlWithQuery: (url: string, query?: HttpQueryParam) => string;

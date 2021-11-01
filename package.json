@@ -1,6 +1,6 @@
 {
   "name": "nexus-http",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "nexus-http is a simple http client that allows you to make requests easily.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -37,14 +37,14 @@
   "homepage": "https://github.com/CheeseGrinder/nexus-http#readme",
   "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.30.0",
-    "@typescript-eslint/parser": "^4.30.0",
-    "eslint": "^7.32.0",
-    "jest": "^27.1.0",
-    "prettier": "^2.3.2",
-    "ts-jest": "^27.0.5",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.2"
+    "@types/jest": "^27.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
+    "@typescript-eslint/parser": "^5.2.0",
+    "eslint": "^8.1.0",
+    "jest": "^27.3.1",
+    "prettier": "^2.4.1",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
   }
 }

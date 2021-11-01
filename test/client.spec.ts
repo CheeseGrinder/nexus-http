@@ -1,4 +1,4 @@
-import { NexusClient } from 'client';
+import { NexusClient } from '../src/client';
 import { ClientTest } from './utils/client-test';
 
 describe('client', () => {
