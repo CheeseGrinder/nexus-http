@@ -13,7 +13,7 @@
     "esModuleInterop": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "rootDir": "./",
+    "rootDir": "./src",
     "outDir": "./dist"
   },
   "exclude": [

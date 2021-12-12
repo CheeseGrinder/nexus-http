@@ -1,7 +1,7 @@
 import { Body } from '../body';
 import { RequestInterceptorContext, ResponseInterceptorContext } from '../interceptors/context';
 import { Interceptor, RequestInterceptor, ResponseInterceptor } from '../interceptors/interceptor';
-import { HttpMethod, HttpOptions, Response, ResponseType } from '../types';
+import { HttpMethod, Response, ResponseType, ClientOptions } from '../types';
 
 export interface Constructor<T> {
   new (): T;
@@ -22,7 +22,7 @@ export abstract class Client {
   /**
    * @internal
    */
-  configure(options: HttpOptions): void {
+  configure(options: ClientOptions): void {
     this.url = options.url;
     this.method = options.method;
     this.body = options.body;

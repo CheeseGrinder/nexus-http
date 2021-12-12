@@ -22,89 +22,86 @@ npm i --save nexus-http
 
 ## How to use ✏️
 
-In a `ts` file this code works, in pure JS, just remove the extra typing from the `client.get` part.
+In a `js` file remove the extra typing from the `nexusHttp.get` part and `.then`.
 
 ```ts
-import { NexusClient } from 'nexus-http';
+import { nexusHttp } from 'nexus-http';
 
-// Several ways to create an instance
-const client = new NexusClient();
-const client = NexusClient.create();
-const client = NexusClient.create({
-  baseUrl: 'http://localhost:3000/',
-  enableDebug: true,
-});
-class CheeseClient extends NexusClient {
-  baseUrl: 'http://localhost:3000/';
-  enableDebug: true;
-}
-
-// To make a get request
-// In this case, we assume that we have defined a baseUrl.
-client
-  .get<{ message: string }>('/users', { page: 1, limit: 10 }) // final url : http://localhosst:3000/users?page=1&limit=10
-  .fetch()
-  .handle({
-    success: data => {
-      // data type: HttpResponse<{ message: string }>
-      // Add some logic on success
-    },
-    error: err => {
-      // err type : HttpResponse<HttpError>
+nexusHttp.get<User[]>('http://localhost:3000/api/users', {
+  query: {
+    page: 1,
+    limit: 12,
+    deleted: false
+  }
+})
+  .then((response: Response<User[]>) => {
+      // Add some logic when status is >= 200 and <= 299
+  })
+  .catch((response: Response<HttpError>) => {
       // Add some logic on error
-    },
-    complete: () => {
-      // Add some logic after success or error
-    },
-  });
-```
-
-You can convert the response to `Promise`.
-
-```ts
-// In this case, we assume that we have defined a baseUrl.
-client
-  .post<{ message: string }>('/users') // final url : http://localhosst:3000/users
-  .body({
-    username: 'CheeseGrinder',
   })
-  .fetch()
-  .toPromise()
-  .then(data => {
-    // data type: HttpResponse<{ message: string }>
-    // Add some logic on success
-  })
-  .catch(data => {
-    // data type: HttpResponse<HttpError>
-    // Add some logic on success
-  })
-  .finnally(() => {
+  .finally(() => {
     // Add some logic after success or error
   });
 ```
 
-You can add body on `POST`, `PUT` and `PATCH`, otherwise its produce an error:
-In a `ts` file this code works, in pure JS, just remove the extra typing from the `client.post` part.
+With baseUrl:
 
 ```ts
-// In this case, we assume that we have defined a baseUrl.
-client
-  .post<{ message: string }>('/users') // final url : http://localhosst:3000/users
-  .body({
-    username: 'CheeseGrinder',
+import { nexusHttp } from 'nexus-http';
+
+nexusHttp.setBaseUrl('http://localhost:3000/api/');
+
+nexusHttp.get<User[]>('/users') // url before adding query params: http://localhost:3000/api/users
+  .then((response: Response<User[]>) => {
+      // Add some logic when status is >= 200 and <= 299
   })
-  .fetch()
-  .handle({
-    success: data => {
-      // data type: HttpResponse<{ message: string }>
-      // Add some logic on success
-    },
-    error: err => {
-      // err type : HttpResponse<HttpError>
+  .catch((response: Response<HttpError>) => {
       // Add some logic on error
-    },
-    complete: () => {
-      // Add some logic after success or error
-    },
+  })
+  .finally(() => {
+    // Add some logic after success or error
+  });
+```
+
+
+Create your own instance:
+
+```ts
+import { NexusHttp } from 'nexus-http';
+
+const nexusHttp = new NexusHttp();
+
+nexusHttp.get<User[]>('http://localhost:3000/api/users')
+  .then((response: Response<User[]>) => {
+      // Add some logic when status is >= 200 and <= 299
+  })
+  .catch((response: Response<HttpError>) => {
+      // Add some logic on error
+  })
+  .finally(() => {
+    // Add some logic after success or error
+  });
+```
+
+
+## Client
+> if fetch is not supported, the client use XmlClient by default.
+```ts
+import { nexusHttp, XmlClient } from 'nexus-http';
+
+const nexusHttp = new NexusHttp();
+nexusHttp.useClient(XmlClient);
+// Now this instance of nexusHttp use the XmlClient (XMLHttpRequest)
+
+nexusHttp.get<User[]>('http://localhost:3000/api/users')
+  .then((response: Response<User[]>) => {
+      // Add some logic when status is >= 200 and <= 299
+  })
+  .catch((response: Response<HttpError>) => {
+      // Add some logic on error
+  })
+  .finally(() => {
+    // Add some logic after success or error
   });
 ```

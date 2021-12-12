@@ -13,19 +13,32 @@ export enum ResponseType {
 export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'TRACE' | 'CONNECT';
 export type BodyType = 'Form' | 'Json' | 'Text' | 'Blob';
 
-export interface HttpOptions {
+export interface RequestBase {
   method: HttpMethod;
   url: string;
   responseType?: ResponseType;
   query?: Record<string, any>;
-  body?: Body;
   headers?: Record<string, string>;
   timeout?: number;
   signal?: AbortSignal;
   interceptors?: Interceptor[];
 }
 
-export type RequestOptions = Omit<HttpOptions, 'method' | 'url'>;
+export interface ClientOptions extends RequestBase {
+  body?: Body;
+}
+
+export interface RequestWithoutDataOptions extends RequestBase {
+  method: 'GET' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'TRACE' | 'CONNECT';
+}
+
+export interface RequestWithDataOptions extends RequestBase {
+  method: 'POST' | 'PATCH' | 'PUT';
+  body?: Body;
+}
+
+export type RequestOptions = RequestWithDataOptions | RequestWithoutDataOptions;
+export type HttpOptions = Omit<RequestOptions, 'url' | 'body'>;
 
 export interface Response<T> {
   readonly url: string;

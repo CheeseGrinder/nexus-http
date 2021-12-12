@@ -1,4 +1,4 @@
-import { Constructor, FetchClient, XmlClient, Client } from './client';
+import { Client, Constructor, FetchClient, XmlClient } from './client';
 import { Interceptor } from './interceptors/interceptor';
 import { HttpOptions, RequestOptions, Response, ResponseType } from './types';
 
@@ -22,7 +22,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  get<T = unknown>(url: string, options?: RequestOptions): Promise<Response<T>> {
+  get<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'GET',
@@ -36,7 +36,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  post<T = unknown>(url: string, options?: RequestOptions): Promise<Response<T>> {
+  post<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'POST',
@@ -50,7 +50,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  patch<T = unknown>(url: string, options?: RequestOptions): Promise<Response<T>> {
+  patch<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'PATCH',
@@ -64,7 +64,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  put<T = unknown>(url: string, options?: RequestOptions): Promise<Response<T>> {
+  put<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'PUT',
@@ -78,7 +78,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  delete<T = unknown>(url: string, options?: RequestOptions): Promise<Response<T>> {
+  delete<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'DELETE',
@@ -91,7 +91,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  async request<T = unknown>(options: HttpOptions): Promise<Response<T>> {
+  async request<T = unknown>(options: RequestOptions): Promise<Response<T>> {
     this.baseUrl;
     const url = new URL(options.url);
     if (options.query) {
@@ -144,11 +144,11 @@ export class NexusHttp {
    * @param url
    * @returns The current Http instance.
    */
-  setBaseUrl(baseURL: string | URL): NexusHttp {
-    if (typeof baseURL === 'string') {
-      baseURL = new URL(baseURL);
+  setBaseUrl(baseUrl: string | URL): NexusHttp {
+    if (typeof baseUrl === 'string') {
+      baseUrl = new URL(baseUrl);
     }
-    this.baseUrl = baseURL.origin + baseURL.pathname;
+    this.baseUrl = baseUrl.origin + baseUrl.pathname;
 
     return this;
   }
