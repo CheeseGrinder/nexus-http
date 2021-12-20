@@ -92,20 +92,34 @@ export class NexusHttp {
    * @returns A promise resolving to the response.
    */
   async request<T = unknown>(options: RequestOptions): Promise<Response<T>> {
-    this.baseUrl;
-    const url = new URL(options.url);
+    let requestUrl: URL;
+
+    if (this.baseUrl) {
+      if (options.url.startsWith('/')) options.url = options.url.slice(1);
+
+      requestUrl = new URL(this.baseUrl);
+      if (this.baseUrl.endsWith('/')) {
+        requestUrl.pathname += options.url;
+      } else {
+        requestUrl.pathname += `/${options.url}`;
+      }
+    } else {
+      requestUrl = new URL(options.url);
+    }
     if (options.query) {
       for (const [key, value] of Object.entries(options.query)) {
-        url.searchParams.append(key, value.toString());
+        requestUrl.searchParams.append(key, value.toString());
       }
     }
+
     this.client.configure({
       ...options,
-      url: url.toString(),
+      url: requestUrl.toString(),
       responseType: options.responseType ?? this.defaultResponseType ?? ResponseType.NONE,
       interceptors: [...this.interceptors, ...(options.interceptors ?? [])]
     });
     this.client.callRequestInterceptors();
+
     return this.client
       .fetch<T>()
       .then(response => {

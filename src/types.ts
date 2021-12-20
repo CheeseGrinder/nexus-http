@@ -38,7 +38,7 @@ export interface RequestWithDataOptions extends RequestBase {
 }
 
 export type RequestOptions = RequestWithDataOptions | RequestWithoutDataOptions;
-export type HttpOptions = Omit<RequestOptions, 'url' | 'body'>;
+export type HttpOptions = Omit<RequestOptions, 'url' | 'method'>;
 
 export interface Response<T> {
   readonly url: string;
