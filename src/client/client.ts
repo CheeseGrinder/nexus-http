@@ -39,7 +39,7 @@ export abstract class Client {
   addInterceptors(...interceptors: Interceptor[]): Client {
     this.requestInterceptors =
       (interceptors?.filter(interceptor => {
-        return !!interceptor.handleResponse && interceptor.allowedMethod.includes(this.method);
+        return !!interceptor.handleRequest && interceptor.allowedMethod.includes(this.method);
       }) as RequestInterceptor[]) ?? [];
     this.responseInterceptors =
       (interceptors?.filter(interceptor => {
