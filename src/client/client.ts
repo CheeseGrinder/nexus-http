@@ -131,6 +131,6 @@ export abstract class Client {
   }
 
   private isPromise(value: any): value is Promise<any> {
-    return typeof value?.then === 'function';
+    return value[Symbol.toStringTag] === 'AsyncFunction';
   }
 }
