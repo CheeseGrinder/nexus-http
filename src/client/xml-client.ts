@@ -3,6 +3,13 @@ import { Client } from './client';
 
 export class XmlClient extends Client {
   async fetch<T>(): Promise<Response<T>> {
+    const baseResponse = {
+      url: this.url,
+      method: this.method,
+      status: null,
+      headers: new Headers()
+    };
+
     return new Promise((resolve, reject) => {
       const controller = new AbortController();
       if (this.timeout > 0) {
@@ -21,10 +28,8 @@ export class XmlClient extends Client {
       xhr.addEventListener('load', () => {
         this.signal?.removeEventListener('abort', abortListener);
         const response: Response<T> = {
-          url: this.url,
-          method: this.method,
+          ...baseResponse,
           status: xhr.status,
-          headers: new Headers(),
           data: xhr.response
         };
         for (const header of xhr.getAllResponseHeaders().split('\r\n')) {
@@ -39,10 +44,7 @@ export class XmlClient extends Client {
       xhr.addEventListener('abort', () => {
         this.signal?.removeEventListener('abort', abortListener);
         return Promise.reject({
-          url: this.url,
-          method: this.method,
-          status: null,
-          headers: new Headers(),
+          ...baseResponse,
           data: {
             name: 'AbortError',
             message: 'Request aborted'
@@ -52,10 +54,7 @@ export class XmlClient extends Client {
       xhr.addEventListener('timeout', () => {
         this.signal?.removeEventListener('abort', abortListener);
         return reject({
-          url: this.url,
-          method: this.method,
-          status: null,
-          headers: new Headers(),
+          ...baseResponse,
           data: {
             name: 'TimeoutError',
             message: 'Timeout error'
@@ -65,10 +64,7 @@ export class XmlClient extends Client {
       xhr.addEventListener('error', () => {
         this.signal?.removeEventListener('abort', abortListener);
         return reject({
-          url: this.url,
-          method: this.method,
-          status: null,
-          headers: new Headers(),
+          ...baseResponse,
           data: {
             name: 'NetworkError',
             message: 'Network error'

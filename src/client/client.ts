@@ -3,10 +3,6 @@ import { RequestInterceptorContext, ResponseInterceptorContext } from '../interc
 import { Interceptor, RequestInterceptor, ResponseInterceptor } from '../interceptors/interceptor';
 import { HttpMethod, Response, ResponseType, ClientOptions } from '../types';
 
-export interface Constructor<T> {
-  new (): T;
-}
-
 export abstract class Client {
   protected url: string;
   protected method: HttpMethod;

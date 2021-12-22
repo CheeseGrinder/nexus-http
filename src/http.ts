@@ -1,6 +1,6 @@
-import { Client, Constructor, FetchClient, XmlClient } from './client';
+import { Client, FetchClient, XmlClient } from './client';
 import { Interceptor } from './interceptors/interceptor';
-import { HttpOptions, RequestOptions, Response, ResponseType } from './types';
+import { Constructor, HttpOptions, RequestOptions, Response, ResponseType } from './types';
 
 type Activator = boolean | (() => boolean);
 

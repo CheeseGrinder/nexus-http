@@ -2,6 +2,10 @@ import { Body } from './body';
 import { Interceptor } from './interceptors/interceptor';
 import { HttpStatusCode } from './status-code';
 
+export interface Constructor<T> {
+  new (): T;
+}
+
 export enum ResponseType {
   JSON = 'json',
   TEXT = 'text',
