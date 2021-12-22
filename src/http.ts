@@ -2,6 +2,8 @@ import { Client, Constructor, FetchClient, XmlClient } from './client';
 import { Interceptor } from './interceptors/interceptor';
 import { HttpOptions, RequestOptions, Response, ResponseType } from './types';
 
+type Activator = boolean | (() => boolean);
+
 export class NexusHttp {
   private client: Client;
   private baseUrl?: string;
@@ -140,7 +142,7 @@ export class NexusHttp {
    * @param client The client class or instance
    * @returns The current Http instance.
    */
-  useClient(client: Client | Constructor<Client>): NexusHttp {
+  useClient(client: Client | Constructor<Client>, activator: Activator = true): NexusHttp {
     if (!client) {
       if ('fetch' in window) {
         this.useClient(FetchClient);
@@ -148,7 +150,8 @@ export class NexusHttp {
         this.useClient(XmlClient);
       }
     }
-    this.client = client instanceof Client ? client : new client();
+    if (typeof activator === 'function') activator = activator();
+    if (activator) this.client = client instanceof Client ? client : new client();
 
     return this;
   }
@@ -174,6 +177,17 @@ export class NexusHttp {
    */
   addGlobalIntercaptors(...interceptors: Interceptor[]): NexusHttp {
     this.interceptors = [...new Set([...this.interceptors, ...interceptors])];
+    return this;
+  }
+
+  /**
+   *
+   * @param interceptors
+   * @returns The current Http instance.
+   */
+  addGlobalIntercaptor(interceptor: Interceptor, activator: Activator = true): NexusHttp {
+    if (typeof activator === 'function') activator = activator();
+    if (activator) this.interceptors = [...new Set([...this.interceptors, interceptor])];
     return this;
   }
 

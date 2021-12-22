@@ -52,3 +52,5 @@ export interface HttpError {
   name: string;
   message: string;
 }
+
+export type Activator = boolean | (() => boolean);

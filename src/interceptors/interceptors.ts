@@ -8,7 +8,7 @@ export class NotFoundInterceptor implements ResponseInterceptor {
 
   private handler: VoidFunction;
 
-  private constructor(handler: VoidFunction, methods?: HttpMethod[]) {
+  constructor(handler: VoidFunction, methods?: HttpMethod[]) {
     this.handler = handler;
     if (methods) this.allowedMethod = methods;
   }
@@ -35,7 +35,7 @@ export class ForbiddenInterceptor implements ResponseInterceptor {
 
   private handler: VoidFunction;
 
-  private constructor(handler: VoidFunction, methods?: HttpMethod[]) {
+  constructor(handler: VoidFunction, methods?: HttpMethod[]) {
     this.handler = handler;
     if (methods) this.allowedMethod = methods;
   }
@@ -62,7 +62,7 @@ export class UnauthorizedInterceptor implements ResponseInterceptor {
 
   private handler: VoidFunction;
 
-  private constructor(handler: VoidFunction, methods?: HttpMethod[]) {
+  constructor(handler: VoidFunction, methods?: HttpMethod[]) {
     this.handler = handler;
     if (methods) this.allowedMethod = methods;
   }
@@ -89,7 +89,7 @@ export class InternalServerErrorInterceptor implements ResponseInterceptor {
 
   private handler: VoidFunction;
 
-  private constructor(handler: VoidFunction, methods?: HttpMethod[]) {
+  constructor(handler: VoidFunction, methods?: HttpMethod[]) {
     this.handler = handler;
     if (methods) this.allowedMethod = methods;
   }

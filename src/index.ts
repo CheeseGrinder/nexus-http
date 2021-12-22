@@ -1,5 +1,5 @@
 export * from './http';
-export * from './client';
-export * from './types';
+export { Client, FetchClient, XmlClient } from './client';
+export { ResponseType, Response, HttpError } from './types';
 export * from './status-code';
 export * from './body';
