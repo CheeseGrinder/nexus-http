@@ -1,4 +1,4 @@
-import { BodyType } from './types';
+import type { BodyType } from './types';
 
 type Part = 'string' | number[];
 

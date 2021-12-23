@@ -1,10 +1,10 @@
-import { ResponseInterceptor } from '.';
-import { HttpStatusCode } from '..';
-import { HttpMethod } from '../types';
+import type { ResponseInterceptor } from '.';
+import { HttpStatusCode } from '../status-code';
+import type { HttpMethod } from '../types';
 import { ResponseInterceptorContext } from './context';
 
 export class NotFoundInterceptor implements ResponseInterceptor {
-  allowedMethod: HttpMethod[] = ['GET'];
+  allowedMethod: HttpMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
   private handler: VoidFunction;
 

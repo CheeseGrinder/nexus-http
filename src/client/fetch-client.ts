@@ -1,14 +1,9 @@
-import { HttpError } from '..';
-import { Response } from '../types';
+import type { HttpError, Response } from '../types';
 import { Client } from './client';
-
-type Writable<T> = {
-  -readonly [P in keyof T]: T[P];
-};
 
 export class FetchClient extends Client {
   async fetch<T>(): Promise<Response<T>> {
-    const controller: Writable<AbortController> = new AbortController();
+    const controller = new AbortController();
     if (this.timeout > 0) {
       setTimeout(() => {
         controller.abort();

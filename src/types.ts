@@ -1,5 +1,5 @@
 import { Body } from './body';
-import { Interceptor } from './interceptors/interceptor';
+import type { Interceptor } from './interceptors/interceptor';
 import { HttpStatusCode } from './status-code';
 
 export interface Constructor<T> {
@@ -26,6 +26,10 @@ export interface RequestBase {
   timeout?: number;
   signal?: AbortSignal;
   interceptors?: Interceptor[];
+}
+
+export interface RequestBody {
+  body?: Body;
 }
 
 export interface ClientOptions extends RequestBase {

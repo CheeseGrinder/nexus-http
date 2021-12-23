@@ -1,4 +1,4 @@
-import { HttpMethod } from '../types';
+import type { HttpMethod } from '../types';
 import { RequestInterceptorContext, ResponseInterceptorContext } from './context';
 
 interface InterceptorBase {

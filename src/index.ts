@@ -1,6 +1,6 @@
-export * from './http';
+export * from './body';
 export { Client, FetchClient, XmlClient } from './client';
-export { ResponseType, Response, HttpError, HttpMethod } from './types';
+export * from './http';
 export * from './interceptors';
 export * from './status-code';
-export * from './body';
+export { HttpError, HttpMethod, Response, ResponseType } from './types';

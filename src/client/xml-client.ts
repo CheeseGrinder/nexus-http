@@ -1,4 +1,4 @@
-import { Response } from '../types';
+import type { Response } from '../types';
 import { Client } from './client';
 
 export class XmlClient extends Client {

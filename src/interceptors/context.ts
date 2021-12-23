@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '../status-code';
-import { HttpMethod } from '../types';
+import type { HttpMethod } from '../types';
 
 interface InterceptorContextInit {
   readonly url: string;

@@ -1,8 +1,7 @@
 import { Client, FetchClient, XmlClient } from './client';
-import { Interceptor } from './interceptors/interceptor';
-import { Constructor, HttpOptions, RequestOptions, Response, ResponseType } from './types';
-
-type Activator = boolean | (() => boolean);
+import type { Interceptor } from './interceptors/interceptor';
+import type { Activator, Constructor, HttpOptions, RequestBody, RequestOptions, Response } from './types';
+import { ResponseType } from './types';
 
 export class NexusHttp {
   private client: Client;
@@ -38,7 +37,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  post<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
+  post<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'POST',
@@ -52,7 +51,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  patch<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
+  patch<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'PATCH',
@@ -66,7 +65,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  put<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
+  put<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<Response<T>> {
     return this.request({
       url: url,
       method: 'PUT',
@@ -187,7 +186,7 @@ export class NexusHttp {
    */
   addGlobalIntercaptor(interceptor: Interceptor, activator: Activator = true): NexusHttp {
     if (typeof activator === 'function') activator = activator();
-    if (activator) this.interceptors = [...new Set([...this.interceptors, interceptor])];
+    if (activator) this.addGlobalIntercaptors(interceptor);
     return this;
   }
 
@@ -205,3 +204,9 @@ export class NexusHttp {
 
 export const nexusHttp = new NexusHttp();
 window['nexusHttp'] = nexusHttp;
+
+declare global {
+  interface Window {
+    nexusHttp: NexusHttp;
+  }
+}

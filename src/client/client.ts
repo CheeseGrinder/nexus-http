@@ -1,7 +1,8 @@
 import { Body } from '../body';
 import { RequestInterceptorContext, ResponseInterceptorContext } from '../interceptors/context';
-import { Interceptor, RequestInterceptor, ResponseInterceptor } from '../interceptors/interceptor';
-import { HttpMethod, Response, ResponseType, ClientOptions } from '../types';
+import type { Interceptor, RequestInterceptor, ResponseInterceptor } from '../interceptors/interceptor';
+import type { ClientOptions, HttpMethod, Response } from '../types';
+import { ResponseType } from '../types';
 
 export abstract class Client {
   protected url: string;
