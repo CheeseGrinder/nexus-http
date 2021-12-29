@@ -13,14 +13,9 @@ export class FetchClient extends Client {
       controller.abort();
     });
 
-    let body = this.body?.payload;
-    if (this.body?.type === 'Json') {
-      body = JSON.stringify(body);
-    }
-
     return fetch(this.url, {
       method: this.method,
-      body: body as any,
+      body: this.body?.payload as any,
       headers: this.headers,
       signal: controller.signal
     })

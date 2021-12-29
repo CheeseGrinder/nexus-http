@@ -72,16 +72,11 @@ export class XmlClient extends Client {
         });
       });
 
-      let body = this.body?.payload;
-      if (this.body?.type === 'Json') {
-        body = JSON.stringify(body);
-      }
-
       this.headers.forEach((value, key) => {
         xhr.setRequestHeader(key, value);
       });
 
-      xhr.send(body as any);
+      xhr.send(this.body?.payload as any);
     });
   }
 }

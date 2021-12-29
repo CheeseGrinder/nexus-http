@@ -25,7 +25,7 @@ export class Body {
    * @param data The body JSON object.
    * @return The body object ready to be used on the POST and PUT requests.
    */
-  static json(data: Record<any, any>): Body {
+  static json(data: Record<string, unknown>): Body {
     return new Body('Json', JSON.stringify(data));
   }
 
