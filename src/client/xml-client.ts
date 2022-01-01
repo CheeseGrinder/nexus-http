@@ -1,13 +1,14 @@
-import type { Response } from '../types';
+import { HttpHeaders } from '../headers';
+import type { HttpResponse } from '../types';
 import { Client } from './client';
 
 export class XmlClient extends Client {
-  async fetch<T>(): Promise<Response<T>> {
+  async fetch<T>(): Promise<HttpResponse<T>> {
     const baseResponse = {
       url: this.url,
       method: this.method,
       status: null,
-      headers: new Headers()
+      headers: new HttpHeaders()
     };
 
     return new Promise((resolve, reject) => {
@@ -27,7 +28,7 @@ export class XmlClient extends Client {
       xhr.timeout = this.timeout;
       xhr.addEventListener('load', () => {
         this.signal?.removeEventListener('abort', abortListener);
-        const response: Response<T> = {
+        const response: HttpResponse<T> = {
           ...baseResponse,
           status: xhr.status,
           data: xhr.response
@@ -72,8 +73,8 @@ export class XmlClient extends Client {
         });
       });
 
-      this.headers.forEach((value, key) => {
-        xhr.setRequestHeader(key, value);
+      this.headers.forEach((name, values) => {
+        xhr.setRequestHeader(name, values.join('; '));
       });
 
       xhr.send(this.body?.payload as any);

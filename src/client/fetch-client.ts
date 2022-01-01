@@ -1,8 +1,9 @@
-import type { HttpError, Response } from '../types';
+import { HttpHeaders } from '../headers';
+import type { HttpError, HttpResponse } from '../types';
 import { Client } from './client';
 
 export class FetchClient extends Client {
-  async fetch<T>(): Promise<Response<T>> {
+  async fetch<T>(): Promise<HttpResponse<T>> {
     const controller = new AbortController();
     if (this.timeout > 0) {
       setTimeout(() => {
@@ -16,7 +17,7 @@ export class FetchClient extends Client {
     return fetch(this.url, {
       method: this.method,
       body: this.body?.payload as any,
-      headers: this.headers,
+      headers: this.headers.toHeaders(),
       signal: controller.signal
     })
       .then(async response => {
@@ -33,7 +34,7 @@ export class FetchClient extends Client {
           url: this.url,
           method: this.method,
           status: response.status,
-          headers: response.headers,
+          headers: HttpHeaders.fromHeaders(response.headers),
           data: data
         });
       })
@@ -56,7 +57,7 @@ export class FetchClient extends Client {
           url: this.url,
           method: this.method,
           status: null,
-          headers: new Headers(),
+          headers: HttpHeaders.fromHeaders(new Headers()),
           data: data
         });
       });

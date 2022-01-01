@@ -93,6 +93,11 @@ export class NexusHttp {
    * @returns A promise resolving to the response.
    */
   async request<T = unknown>(options: RequestOptions): Promise<Response<T>> {
+    options.timeout ??= null;
+    options.interceptors ??= [];
+    options.responseType ??= this.defaultResponseType ?? ResponseType.NONE;
+
+    const { client } = this;
     let requestUrl: URL;
 
     if (this.baseUrl) {
@@ -113,25 +118,25 @@ export class NexusHttp {
       }
     }
 
-    this.client.configure({
+    client.configure({
       ...options,
       url: requestUrl.toString(),
-      responseType: options.responseType ?? this.defaultResponseType ?? ResponseType.NONE,
-      interceptors: [...this.interceptors, ...(options.interceptors ?? [])]
+      responseType: options.responseType,
+      interceptors: [...this.interceptors, ...options.interceptors]
     });
-    this.client.callRequestInterceptors();
+    await client.callRequestInterceptors();
 
-    return this.client
+    return client
       .fetch<T>()
-      .then(response => {
+      .then(async response => {
         if (response.status >= 200 && response.status <= 299) {
-          this.client.callResponseInterceptors(response);
+          await client.callResponseInterceptors(response);
           return Promise.resolve(response);
         }
         return Promise.reject(response);
       })
-      .catch(response => {
-        this.client.callResponseInterceptors(response);
+      .catch(async response => {
+        await client.callResponseInterceptors(response);
         return Promise.reject(response);
       });
   }

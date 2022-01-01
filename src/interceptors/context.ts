@@ -1,21 +1,22 @@
+import { HttpHeaders } from '../headers';
 import { HttpStatusCode } from '../status-code';
 import type { HttpMethod } from '../types';
 
 interface InterceptorContextInit {
   readonly url: string;
   readonly method: HttpMethod;
-  readonly headers: Headers;
+  readonly headers: HttpHeaders;
 }
 
 export class InterceptorContext {
   readonly url: string;
   readonly method: HttpMethod;
-  readonly headers: Headers;
+  readonly headers: HttpHeaders;
 
   constructor(context: InterceptorContextInit) {
     this.url = context.url;
     this.method = context.method;
-    this.headers = context.headers;
+    this.headers = new HttpHeaders(context.headers);
   }
 }
 

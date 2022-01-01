@@ -1,4 +1,5 @@
 import { Body } from './body';
+import { HttpHeaders, HttpHeadersInit } from './headers';
 import type { Interceptor } from './interceptors/interceptor';
 import { HttpStatusCode } from './status-code';
 
@@ -22,7 +23,7 @@ export interface RequestBase {
   url: string;
   responseType?: ResponseType;
   query?: Record<string, any>;
-  headers?: Record<string, string>;
+  headers?: HttpHeadersInit;
   timeout?: number;
   signal?: AbortSignal;
   interceptors?: Interceptor[];
@@ -48,13 +49,18 @@ export interface RequestWithDataOptions extends RequestBase {
 export type RequestOptions = RequestWithDataOptions | RequestWithoutDataOptions;
 export type HttpOptions = Omit<RequestOptions, 'url' | 'method'>;
 
-export interface Response<T> {
+/**
+ * @deprecated use HttpResponse instead
+ */
+export interface Response<T = unknown> {
   readonly url: string;
   readonly method: HttpMethod;
   readonly status: HttpStatusCode;
-  readonly headers: Headers;
+  readonly headers: HttpHeaders;
   readonly data: T;
 }
+
+export type HttpResponse<T = unknown> = Response<T>;
 
 export interface HttpError {
   name: string;

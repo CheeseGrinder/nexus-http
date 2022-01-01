@@ -1,14 +1,18 @@
 import { Body } from '../body';
+import { HttpHeaders } from '../headers';
 import { RequestInterceptorContext, ResponseInterceptorContext } from '../interceptors/context';
 import type { Interceptor, RequestInterceptor, ResponseInterceptor } from '../interceptors/interceptor';
-import type { ClientOptions, HttpMethod, Response } from '../types';
+import type { ClientOptions, HttpMethod, HttpResponse } from '../types';
 import { ResponseType } from '../types';
+
+const CONTENT_TYPE = 'Content-Type';
+const ACCEPT = 'Accept';
 
 export abstract class Client {
   protected url: string;
   protected method: HttpMethod;
   protected body: Body;
-  protected headers: Headers;
+  protected headers: HttpHeaders;
   protected responseType: ResponseType;
   protected timeout: number;
   protected signal: AbortSignal;
@@ -23,9 +27,9 @@ export abstract class Client {
     this.url = options.url;
     this.method = options.method;
     this.body = options.body;
-    this.headers = new Headers(options.headers);
+    this.headers = new HttpHeaders(options.headers);
     this.responseType = options.responseType;
-    this.timeout = options.timeout ?? null;
+    this.timeout = options.timeout;
     this.signal = options.signal;
     this.addInterceptors(...options.interceptors);
   }
@@ -50,11 +54,30 @@ export abstract class Client {
    * @internal
    */
   async callRequestInterceptors(): Promise<void> {
+    switch (this.body?.type) {
+      case 'Json':
+        this.headers.set(CONTENT_TYPE, 'application/json');
+        break;
+      case 'Text':
+        this.headers.set(CONTENT_TYPE, 'text/*');
+        break;
+      case 'Form':
+        this.headers.set(CONTENT_TYPE, 'multipart/form-data');
+        break;
+      case 'Blob':
+        this.headers.set(CONTENT_TYPE, 'application/octet-stream');
+        break;
+
+      default:
+        break;
+    }
+    this.headers.append(CONTENT_TYPE, 'charset=UTF-8');
+
     for (const interceptor of this.requestInterceptors) {
       let context = new RequestInterceptorContext({
         url: this.url,
         method: this.method,
-        headers: new Headers()
+        headers: new HttpHeaders()
       });
 
       if (this.isPromise(interceptor.handleRequest)) {
@@ -63,47 +86,24 @@ export abstract class Client {
         context = interceptor.handleRequest(context) as RequestInterceptorContext;
       }
 
-      context.headers.forEach((value, key) => {
-        this.headers.append(key, value);
-      });
+      context.headers.forEach(this.headers.append);
     }
 
-    const bodyType = this.body?.type;
-    switch (bodyType) {
-      case 'Json':
-        this.headers.set('Content-Type', 'application/json');
-        break;
-      case 'Text':
-        this.headers.set('Content-Type', 'text/*');
-        break;
-      case 'Form':
-        this.headers.set('Content-Type', 'multipart/form-data');
-        break;
-      case 'Blob':
-        this.headers.set('Content-Type', 'application/octet-stream');
-        break;
-
-      default:
-        break;
-    }
-    this.headers.append('Content-Type', 'charset=UTF-8');
-
-    if (this.headers.has('Accept')) return;
-
+    if (this.headers.has(ACCEPT)) return;
     switch (this.responseType) {
       case ResponseType.JSON:
-        this.headers.set('Accept', 'application/json');
+        this.headers.set(ACCEPT, 'application/json');
         break;
       case ResponseType.TEXT:
-        this.headers.set('Accept', 'text/*');
+        this.headers.set(ACCEPT, 'text/*');
         break;
       case ResponseType.BLOB:
       case ResponseType.ARRAY_BUFFER:
-        this.headers.set('Accept', 'application/octet-stream');
+        this.headers.set(ACCEPT, 'application/octet-stream');
         break;
 
       default:
-        this.headers.set('Accept', '*/*');
+        this.headers.set(ACCEPT, '*/*');
         break;
     }
   }
@@ -111,7 +111,7 @@ export abstract class Client {
   /**
    * @internal
    */
-  async callResponseInterceptors(response: Response<any>): Promise<void> {
+  async callResponseInterceptors(response: HttpResponse): Promise<void> {
     const context = new ResponseInterceptorContext(response);
 
     for (const interceptor of this.responseInterceptors) {
@@ -123,7 +123,7 @@ export abstract class Client {
     }
   }
 
-  fetch<T>(): Promise<Response<T>> {
+  fetch<T>(): Promise<HttpResponse<T>> {
     throw new Error('Not implemented');
   }
 
