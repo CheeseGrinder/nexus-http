@@ -1,6 +1,6 @@
 {
   "name": "nexus-http",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "nexus-http is a simple http client that allows you to make requests easily.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
