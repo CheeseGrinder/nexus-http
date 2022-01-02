@@ -25,7 +25,7 @@ npm i --save nexus-http
 In a `js` file remove the extra typing from the `nexusHttp.get` part and `.then`.
 
 ```ts
-import { nexusHttp } from 'nexus-http';
+import { nexusHttp, HttpError, HttpResponse } from 'nexus-http';
 
 nexusHttp.get<User[]>('http://localhost:3000/api/users', {
   query: {
@@ -34,10 +34,10 @@ nexusHttp.get<User[]>('http://localhost:3000/api/users', {
     deleted: false
   }
 })
-  .then((response: Response<User[]>) => {
+  .then((response: HttpResponse<User[]>) => {
       // Add some logic when status is >= 200 and <= 299
   })
-  .catch((response: Response<HttpError>) => {
+  .catch((response: HttpResponse<HttpError>) => {
       // Add some logic on error
   })
   .finally(() => {
@@ -48,15 +48,15 @@ nexusHttp.get<User[]>('http://localhost:3000/api/users', {
 With baseUrl:
 
 ```ts
-import { nexusHttp } from 'nexus-http';
+import { nexusHttp, HttpError, HttpResponse } from 'nexus-http';
 
 nexusHttp.setBaseUrl('http://localhost:3000/api/');
 
 nexusHttp.get<User[]>('/users') // url before adding query params: http://localhost:3000/api/users
-  .then((response: Response<User[]>) => {
+  .then((response: HttpResponse<User[]>) => {
       // Add some logic when status is >= 200 and <= 299
   })
-  .catch((response: Response<HttpError>) => {
+  .catch((response: HttpResponse<HttpError>) => {
       // Add some logic on error
   })
   .finally(() => {
@@ -68,15 +68,15 @@ nexusHttp.get<User[]>('/users') // url before adding query params: http://localh
 Create your own instance:
 
 ```ts
-import { NexusHttp } from 'nexus-http';
+import { nexusHttp, HttpError, HttpResponse } from 'nexus-http';
 
 const nexusHttp = new NexusHttp();
 
 nexusHttp.get<User[]>('http://localhost:3000/api/users')
-  .then((response: Response<User[]>) => {
+  .then((response: HttpResponse<User[]>) => {
       // Add some logic when status is >= 200 and <= 299
   })
-  .catch((response: Response<HttpError>) => {
+  .catch((response: HttpResponse<HttpError>) => {
       // Add some logic on error
   })
   .finally(() => {
@@ -88,17 +88,17 @@ nexusHttp.get<User[]>('http://localhost:3000/api/users')
 ## Client
 > if fetch is not supported, the client use XmlClient by default.
 ```ts
-import { nexusHttp, XmlClient } from 'nexus-http';
+import { nexusHttp, HttpError, HttpResponse, XmlClient } from 'nexus-http';
 
 const nexusHttp = new NexusHttp();
 nexusHttp.useClient(XmlClient);
 // Now this instance of nexusHttp use the XmlClient (XMLHttpRequest)
 
 nexusHttp.get<User[]>('http://localhost:3000/api/users')
-  .then((response: Response<User[]>) => {
+  .then((response: HttpResponse<User[]>) => {
       // Add some logic when status is >= 200 and <= 299
   })
-  .catch((response: Response<HttpError>) => {
+  .catch((response: HttpResponse<HttpError>) => {
       // Add some logic on error
   })
   .finally(() => {
