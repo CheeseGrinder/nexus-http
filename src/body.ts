@@ -1,6 +1,6 @@
 import type { BodyType } from './types';
 
-type Part = 'string' | number[];
+type Part = string | number[];
 
 export class Body {
   type: BodyType;

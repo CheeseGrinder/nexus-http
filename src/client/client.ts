@@ -58,20 +58,13 @@ export abstract class Client {
       case 'Json':
         this.headers.set(CONTENT_TYPE, 'application/json');
         break;
-      case 'Text':
-        this.headers.set(CONTENT_TYPE, 'text/*');
-        break;
-      case 'Form':
-        this.headers.set(CONTENT_TYPE, 'multipart/form-data');
-        break;
-      case 'Blob':
-        this.headers.set(CONTENT_TYPE, 'application/octet-stream');
-        break;
 
       default:
         break;
     }
-    this.headers.append(CONTENT_TYPE, 'charset=UTF-8');
+    if (this.headers.has(CONTENT_TYPE) && this.headers.getAll(CONTENT_TYPE).includes('application/json')) {
+      this.headers.append(CONTENT_TYPE, 'charset=UTF-8');
+    }
 
     for (const interceptor of this.requestInterceptors) {
       let context = new RequestInterceptorContext({
