@@ -222,10 +222,12 @@ export class NexusHttp {
 }
 
 export const nexusHttp = new NexusHttp();
+window['NexusHttp'] = NexusHttp;
 window['nexusHttp'] = nexusHttp;
 
 declare global {
   interface Window {
+    NexusHttp: Constructor<NexusHttp>;
     nexusHttp: NexusHttp;
   }
 }
