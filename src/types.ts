@@ -15,6 +15,8 @@ export enum ResponseType {
   NONE = ''
 }
 
+export type ResponseValidator = (status: HttpStatusCode) => boolean;
+
 export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'TRACE' | 'CONNECT';
 export type BodyType = 'Form' | 'Json' | 'Text' | 'Blob';
 
@@ -27,6 +29,7 @@ export interface RequestBase {
   timeout?: number;
   signal?: AbortSignal;
   interceptors?: Interceptor[];
+  validator?: ResponseValidator;
 }
 
 export interface RequestBody {

@@ -1,13 +1,24 @@
 import { Client, FetchClient, XmlClient } from './client';
 import type { Interceptor } from './interceptors/interceptor';
-import type { Activator, Constructor, HttpOptions, RequestBody, RequestOptions, HttpResponse } from './types';
+import type {
+  Activator,
+  Constructor,
+  HttpOptions,
+  HttpResponse,
+  RequestBody,
+  RequestOptions,
+  ResponseValidator
+} from './types';
 import { ResponseType } from './types';
+
+const defaultResponseValidator: ResponseValidator = status => status >= 200 && status <= 299;
 
 interface NexusHttpInit {
   client?: Client | Constructor<Client>;
   baseUrl?: string | URL;
   interceptors?: Interceptor[];
-  defaultResponseType?: ResponseType;
+  responseType?: ResponseType;
+  responseValidator?: ResponseValidator;
 }
 
 export class NexusHttp {
@@ -15,12 +26,14 @@ export class NexusHttp {
   private baseUrl?: string;
   private interceptors: Interceptor[] = [];
   private defaultResponseType?: ResponseType;
+  private responseValidator: ResponseValidator;
 
   constructor(init?: NexusHttpInit) {
     init ||= {};
     init.baseUrl && this.setBaseUrl(init.baseUrl);
     init.interceptors && this.addGlobalIntercaptors(...init.interceptors);
-    init.defaultResponseType && this.setDefaultResponseType(init.defaultResponseType);
+    init.responseType && this.setDefaultResponseType(init.responseType);
+    init.responseValidator && this.setDefaultResponseType(init.responseType);
 
     if (init.client) {
       this.useClient(init.client);
@@ -110,6 +123,7 @@ export class NexusHttp {
     options.timeout ??= null;
     options.interceptors ??= [];
     options.responseType ??= this.defaultResponseType ?? ResponseType.NONE;
+    options.validator ??= this.responseValidator ?? defaultResponseValidator;
 
     const client: Client = Object.assign(Object.create(Object.getPrototypeOf(this.client)), this.client);
     let requestUrl: URL;
@@ -143,7 +157,7 @@ export class NexusHttp {
     return client
       .fetch<T>()
       .then(async response => {
-        if (response.status >= 200 && response.status <= 299) {
+        if (options.validator(response.status)) {
           await client.callResponseInterceptors(response);
           return Promise.resolve(response);
         }
@@ -215,8 +229,19 @@ export class NexusHttp {
    * @returns The current Http instance.
    */
   setDefaultResponseType(type: ResponseType): NexusHttp {
-    if (!type) type = ResponseType.NONE;
+    type ||= ResponseType.NONE;
     this.defaultResponseType = type;
+    return this;
+  }
+
+  /**
+   *
+   * @param validator
+   * @returns The current Http instance.
+   */
+  setDefaultResponseValidator(validator: ResponseValidator): NexusHttp {
+    validator ||= defaultResponseValidator;
+    this.responseValidator = validator;
     return this;
   }
 }
