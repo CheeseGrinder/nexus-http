@@ -1,7 +1,14 @@
 import { Client, FetchClient, XmlClient } from './client';
 import type { Interceptor } from './interceptors/interceptor';
-import type { Activator, Constructor, HttpOptions, RequestBody, RequestOptions, Response } from './types';
+import type { Activator, Constructor, HttpOptions, RequestBody, RequestOptions, HttpResponse } from './types';
 import { ResponseType } from './types';
+
+interface NexusHttpInit {
+  client?: Client | Constructor<Client>;
+  baseUrl?: string | URL;
+  interceptors?: Interceptor[];
+  defaultResponseType?: ResponseType;
+}
 
 export class NexusHttp {
   private client: Client;
@@ -9,8 +16,15 @@ export class NexusHttp {
   private interceptors: Interceptor[] = [];
   private defaultResponseType?: ResponseType;
 
-  constructor() {
-    if ('fetch' in window) {
+  constructor(init?: NexusHttpInit) {
+    init ||= {};
+    init.baseUrl && this.setBaseUrl(init.baseUrl);
+    init.interceptors && this.addGlobalIntercaptors(...init.interceptors);
+    init.defaultResponseType && this.setDefaultResponseType(init.defaultResponseType);
+
+    if (init.client) {
+      this.useClient(init.client);
+    } else if ('fetch' in window) {
       this.useClient(FetchClient);
     } else {
       this.useClient(XmlClient);
@@ -23,7 +37,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  get<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
+  get<T = unknown>(url: string, options?: HttpOptions): Promise<HttpResponse<T>> {
     return this.request({
       url: url,
       method: 'GET',
@@ -37,7 +51,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  post<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<Response<T>> {
+  post<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<HttpResponse<T>> {
     return this.request({
       url: url,
       method: 'POST',
@@ -51,7 +65,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  patch<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<Response<T>> {
+  patch<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<HttpResponse<T>> {
     return this.request({
       url: url,
       method: 'PATCH',
@@ -65,7 +79,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  put<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<Response<T>> {
+  put<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<HttpResponse<T>> {
     return this.request({
       url: url,
       method: 'PUT',
@@ -79,7 +93,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  delete<T = unknown>(url: string, options?: HttpOptions): Promise<Response<T>> {
+  delete<T = unknown>(url: string, options?: HttpOptions): Promise<HttpResponse<T>> {
     return this.request({
       url: url,
       method: 'DELETE',
@@ -92,12 +106,12 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  async request<T = unknown>(options: RequestOptions): Promise<Response<T>> {
+  async request<T = unknown>(options: RequestOptions): Promise<HttpResponse<T>> {
     options.timeout ??= null;
     options.interceptors ??= [];
     options.responseType ??= this.defaultResponseType ?? ResponseType.NONE;
 
-    const { client } = this;
+    const client: Client = Object.assign(Object.create(Object.getPrototypeOf(this.client)), this.client);
     let requestUrl: URL;
 
     if (this.baseUrl) {
