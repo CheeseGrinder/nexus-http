@@ -22,7 +22,6 @@ export type BodyType = 'Form' | 'Json' | 'Text' | 'Blob';
 
 export interface RequestBase {
   method: HttpMethod;
-  url: string;
   responseType?: ResponseType;
   query?: Record<string, any>;
   headers?: HttpHeadersInit;
@@ -38,6 +37,7 @@ export interface RequestBody {
 
 export interface ClientOptions extends RequestBase {
   body?: Body;
+  url: string;
 }
 
 export interface RequestWithoutDataOptions extends RequestBase {
@@ -49,21 +49,32 @@ export interface RequestWithDataOptions extends RequestBase {
   body?: Body;
 }
 
-export type RequestOptions = RequestWithDataOptions | RequestWithoutDataOptions;
-export type HttpOptions = Omit<RequestOptions, 'url' | 'method'>;
+export type RequestOptions<Path extends string> = (RequestWithDataOptions | RequestWithoutDataOptions) & {
+  params?: PathArgs<Path>;
+};
 
-/**
- * @deprecated use HttpResponse instead
- */
-export interface Response<T = unknown> {
+export type HttpOptions<Path extends string> = Omit<RequestOptions<Path>, 'url' | 'method'> & {
+  params?: PathArgs<Path>;
+};
+
+type PathParams<Path extends string> = Path extends `:${infer Param}/${infer Rest}`
+  ? Param | PathParams<Rest>
+  : Path extends `:${infer Param}`
+  ? Param
+  : // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Path extends `${infer _Prefix}:${infer Rest}`
+  ? PathParams<`:${Rest}`>
+  : never;
+
+export type PathArgs<Path extends string> = { [K in PathParams<Path>]: any };
+
+export type HttpResponse<T = unknown> = {
   readonly url: string;
   readonly method: HttpMethod;
   readonly status: HttpStatusCode;
   readonly headers: HttpHeaders;
   readonly data: T;
-}
-
-export type HttpResponse<T = unknown> = Response<T>;
+};
 
 export interface HttpError {
   name: string;

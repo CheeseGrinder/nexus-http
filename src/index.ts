@@ -4,4 +4,4 @@ export * from './headers';
 export * from './http';
 export * from './interceptors';
 export * from './status-code';
-export { HttpError, HttpMethod, HttpResponse, Response, ResponseType } from './types';
+export { HttpError, HttpMethod, HttpResponse, ResponseType } from './types';

@@ -50,9 +50,8 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  get<T = unknown>(url: string, options?: HttpOptions): Promise<HttpResponse<T>> {
-    return this.request({
-      url: url,
+  get<Path extends string, T = unknown>(url: Path, options?: HttpOptions<Path>): Promise<HttpResponse<T>> {
+    return this.request(url, {
       method: 'GET',
       ...options
     });
@@ -64,9 +63,11 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  post<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<HttpResponse<T>> {
-    return this.request({
-      url: url,
+  post<Path extends string, T = unknown>(
+    url: Path,
+    options?: HttpOptions<Path> & RequestBody
+  ): Promise<HttpResponse<T>> {
+    return this.request(url, {
       method: 'POST',
       ...options
     });
@@ -78,9 +79,11 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  patch<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<HttpResponse<T>> {
-    return this.request({
-      url: url,
+  patch<Path extends string, T = unknown>(
+    url: Path,
+    options?: HttpOptions<Path> & RequestBody
+  ): Promise<HttpResponse<T>> {
+    return this.request(url, {
       method: 'PATCH',
       ...options
     });
@@ -92,9 +95,11 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  put<T = unknown>(url: string, options?: HttpOptions & RequestBody): Promise<HttpResponse<T>> {
-    return this.request({
-      url: url,
+  put<Path extends string, T = unknown>(
+    url: Path,
+    options?: HttpOptions<Path> & RequestBody
+  ): Promise<HttpResponse<T>> {
+    return this.request(url, {
       method: 'PUT',
       ...options
     });
@@ -106,9 +111,8 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  delete<T = unknown>(url: string, options?: HttpOptions): Promise<HttpResponse<T>> {
-    return this.request({
-      url: url,
+  delete<Path extends string, T = unknown>(url: Path, options?: HttpOptions<Path>): Promise<HttpResponse<T>> {
+    return this.request(url, {
       method: 'DELETE',
       ...options
     });
@@ -119,7 +123,7 @@ export class NexusHttp {
    * @param options The request options.
    * @returns A promise resolving to the response.
    */
-  async request<T = unknown>(options: RequestOptions): Promise<HttpResponse<T>> {
+  async request<Path extends string, T = unknown>(url: Path, options: RequestOptions<Path>): Promise<HttpResponse<T>> {
     options.timeout ??= null;
     options.interceptors ??= [];
     options.responseType ??= this.defaultResponseType ?? ResponseType.NONE;
@@ -129,20 +133,25 @@ export class NexusHttp {
     let requestUrl: URL;
 
     if (this.baseUrl) {
-      if (options.url.startsWith('/')) options.url = options.url.slice(1);
+      if (url.startsWith('/')) url = url.slice(1) as Path;
 
       requestUrl = new URL(this.baseUrl);
       if (this.baseUrl.endsWith('/')) {
-        requestUrl.pathname += options.url;
+        requestUrl.pathname += url;
       } else {
-        requestUrl.pathname += `/${options.url}`;
+        requestUrl.pathname += `/${url}`;
       }
     } else {
-      requestUrl = new URL(options.url);
+      requestUrl = new URL(url);
     }
     if (options.query) {
       for (const [key, value] of Object.entries(options.query)) {
         requestUrl.searchParams.append(key, value.toString());
+      }
+    }
+    if (options.params) {
+      for (const [key, value] of Object.entries(options.params)) {
+        requestUrl.pathname.replace(new RegExp(`:${key}`, 'g'), value.toString());
       }
     }
 
