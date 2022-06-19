@@ -73,7 +73,7 @@ export class HttpHeaders {
    * If the header already exists, its value is replaced with the given value.
    *
    * @param name The header name.
-   * @param value The value or values to set or overide for the given header.
+   * @param values The value or values to set or overide for the given header.
    */
   set(name: string, values: string | string[]): HttpHeaders {
     this.delete(name);
@@ -86,7 +86,7 @@ export class HttpHeaders {
    * Deletes values for a given header
    *
    * @param {string} name The header name.
-   * @param {string | string[]} [value] The value or values to delete for the given header.
+   * @param {string | string[]} [values] The value or values to delete for the given header.
    */
   delete(name: string, values?: string | string[]): HttpHeaders {
     const trimedName = name.trim();
@@ -108,14 +108,14 @@ export class HttpHeaders {
    * If the header doesn't exists, its will create it.
    *
    * @param name The header name.
-   * @param value The value or values to set or overide for the given header.
+   * @param values The value or values to set or overide for the given header.
    */
-  append(key: string, values: string | string[]): HttpHeaders {
-    const trimedKey = key.trim();
-    if (!this.headers.has(trimedKey)) this.headers.set(trimedKey, []);
+  append(name: string, values: string | string[]): HttpHeaders {
+    const trimedName = name.trim();
+    if (!this.headers.has(trimedName)) this.headers.set(trimedName, []);
     if (!Array.isArray(values)) values = values.split(/;\s?/);
 
-    const actual = this.headers.get(trimedKey);
+    const actual = this.headers.get(trimedName);
     actual.push(...values.filter(v => !actual.includes(v)));
     return this;
   }

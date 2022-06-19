@@ -79,7 +79,7 @@ export abstract class Client {
         context = interceptor.handleRequest(context) as RequestInterceptorContext;
       }
 
-      context.headers.forEach(this.headers.append);
+      context.headers.forEach((name, values) => this.headers.append(name, values));
     }
 
     if (this.headers.has(ACCEPT)) return;
