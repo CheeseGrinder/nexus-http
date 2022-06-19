@@ -57,7 +57,7 @@ export type HttpOptions<Path extends string> = Omit<RequestOptions<Path>, 'url' 
   params?: PathArgs<Path>;
 };
 
-type PathParams<Path extends string> = Path extends `:${infer Param}/${infer Rest}`
+export type PathParams<Path extends string> = Path extends `:${infer Param}/${infer Rest}`
   ? Param | PathParams<Rest>
   : Path extends `:${infer Param}`
   ? Param
